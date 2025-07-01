@@ -1,6 +1,7 @@
 module com.rscars.taller.rscarsfx {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
 
     requires org.controlsfx.controls;
 
