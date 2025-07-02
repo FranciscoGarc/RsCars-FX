@@ -16,6 +16,11 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+    @Override
+    public void stop() {
+        System.out.println("Cerrando la aplicación...");
+        ConexionDB.obtenerInstancia().cerrarConexion();
+    }
 
     public static void main(String[] args) {
         launch();

@@ -308,3 +308,4 @@ INSERT INTO tbVentas (subtotal, iva, total, idCita, idCliente, idVehiculo, idRep
     (75.00, 10, 85.00, 2, 2, 2, NULL, 2, 2);
 
 
+select * from tbClientes;

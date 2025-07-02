@@ -2,8 +2,15 @@ package com.rscars.taller.rscarsfx;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import java.io.IOException;
 
 public class MainController {
+
+    @FXML
+    private BorderPane mainPanel;
 
     @FXML
     private MenuItem menuCerrarSesion;
@@ -20,17 +27,26 @@ public class MainController {
     @FXML
     private MenuItem menuAgendarCita;
 
+
     // Aquí agregaremos los métodos para manejar los clics del menú
 
     @FXML
     void onGestionClientesClick() {
         System.out.println("Cargando gestión de clientes...");
-        // Futuro: Cargar clientes-view.fxml en el centro del BorderPane
+        cargarVista("clientes-view.fxml");
     }
-
     @FXML
     void onCerrarSesionClick() {
         System.out.println("Cerrando sesión...");
         // Futuro: Lógica para cerrar esta ventana y mostrar el login
+    }
+    private void cargarVista(String fxmlFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource(fxmlFile));
+            Pane view = loader.load();
+            mainPanel.setCenter(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

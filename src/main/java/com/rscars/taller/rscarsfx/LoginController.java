@@ -69,21 +69,29 @@ public class LoginController {
     }
 
     private boolean validarCredenciales(String usuario, String contra) {
-        // Usamos PreparedStatement para evitar inyección SQL
+        // La consulta SQL no cambia
         String sql = "SELECT * FROM tbUsuarios WHERE usuario = ? AND contra = ?";
-        try (Connection cnx = ConexionDB.obtenerInstancia().getCnx();
-             PreparedStatement pst = cnx.prepareStatement(sql)) {
 
+        // Obtenemos la conexión singleton
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+
+        // Verificamos que la conexión no sea nula
+        if (cnx == null) {
+            mostrarAlerta("Error de Conexión", "No se pudo conectar a la base de datos.");
+            return false;
+        }
+
+        // El try-with-resources ahora solo gestiona PreparedStatement y ResultSet
+        try (PreparedStatement pst = cnx.prepareStatement(sql)) {
             pst.setString(1, usuario);
             pst.setString(2, contra);
 
             try (ResultSet rs = pst.executeQuery()) {
-                // Si rs.next() es true, significa que encontró al menos un resultado
-                return rs.next();
+                return rs.next(); // Devuelve true si encuentra un usuario
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            mostrarAlerta("Error de Conexión", "No se pudo conectar a la base de datos.");
+            mostrarAlerta("Error de Consulta", "Error al verificar las credenciales.");
             return false;
         }
     }
