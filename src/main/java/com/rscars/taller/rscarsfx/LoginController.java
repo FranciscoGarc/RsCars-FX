@@ -5,6 +5,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,15 +33,38 @@ public class LoginController {
         String contra = pfContra.getText();
 
         if (usuario.isEmpty() || contra.isEmpty()) {
-            mostrarAlerta("Error", "Por favor, ingrese usuario y contraseña.");
+            mostrarAlerta("Error de Validación", "Por favor, ingrese usuario y contraseña.");
             return;
         }
 
         if (validarCredenciales(usuario, contra)) {
-            mostrarAlerta("Éxito", "¡Inicio de sesión exitoso!");
-            // Aquí irá el código para abrir la ventana principal
+            // ---- INICIO DE LA MODIFICACIÓN ----
+            abrirVentanaPrincipal();
+            // ---- FIN DE LA MODIFICACIÓN ----
         } else {
-            mostrarAlerta("Error", "Usuario o contraseña incorrectos.");
+            mostrarAlerta("Error de Autenticación", "Usuario o contraseña incorrectos.");
+        }
+    }
+
+    private void abrirVentanaPrincipal() {
+        try {
+            // Cargar la nueva vista
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("main-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+
+            // Crear un nuevo Stage (ventana)
+            Stage stage = new Stage();
+            stage.setTitle("RsCars Taller - Panel Principal");
+            stage.setScene(scene);
+            stage.show();
+
+            // Cerrar la ventana de login actual
+            Stage loginStage = (Stage) btnIngresar.getScene().getWindow();
+            loginStage.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo abrir la ventana principal.");
         }
     }
 
