@@ -36,6 +36,11 @@ public class MainController {
         cargarVista("clientes-view.fxml");
     }
     @FXML
+    void onGestionVehiculosClick() {
+        System.out.println("Cargando gestión de vehículos...");
+        cargarVista("vehiculos-view.fxml");
+    }
+    @FXML
     void onCerrarSesionClick() {
         System.out.println("Cerrando sesión...");
         // Futuro: Lógica para cerrar esta ventana y mostrar el login
