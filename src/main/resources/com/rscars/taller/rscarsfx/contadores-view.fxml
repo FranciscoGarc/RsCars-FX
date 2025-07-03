@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.ContadoresController">
+    <top>
+        <Label text="Gestión de Contadores" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+            <BorderPane.margin>
+                <Insets bottom="10.0" top="10.0" />
+            </BorderPane.margin>
+        </Label>
+    </top>
+    <center>
+        <TableView fx:id="tablaContadores" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="colIdEmpleado" prefWidth="60.0" text="ID Empleado" />
+                <TableColumn fx:id="colIdUsuario" prefWidth="60.0" text="ID Usuario" />
+                <TableColumn fx:id="colNombre" prefWidth="120.0" text="Nombre" />
+                <TableColumn fx:id="colApellido" prefWidth="120.0" text="Apellido" />
+                <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
+                <TableColumn fx:id="colDireccion" prefWidth="150.0" text="Dirección" />
+                <TableColumn fx:id="colDui" prefWidth="100.0" text="DUI" />
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="60.0" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="btnNuevo" onAction="#handleNuevoContador" mnemonicParsing="false" text="Nuevo Contador" />
+                <Button fx:id="btnEditar" onAction="#handleEditarContador" mnemonicParsing="false" text="Editar Contador" />
+                <Button fx:id="btnEliminar" onAction="#handleEliminarContador" mnemonicParsing="false" text="Eliminar Contador" />
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>
+
