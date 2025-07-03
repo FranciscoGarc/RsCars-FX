@@ -35,4 +35,9 @@ public class Cliente {
     public SimpleStringProperty telefonoProperty() { return telefono; }
     public SimpleStringProperty direccionProperty() { return direccion; }
     public SimpleStringProperty duiProperty() { return dui; }
+    @Override
+    public String toString() {
+        // Esto es lo que se mostrará en el ComboBox
+        return getNombre() + " " + getApellido();
+    }
 }
