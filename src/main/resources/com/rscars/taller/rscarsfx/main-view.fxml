@@ -27,8 +27,8 @@
                                 <MenuItem fx:id="menuContadores" onAction="#onGestionContadoresClick" mnemonicParsing="false" text="Contadores"/>
                             </items>
                         </Menu>
-                        <MenuItem fx:id="menuGestionRepuestos" mnemonicParsing="false" text="Repuestos"/>
-                        <MenuItem fx:id="menuGestionProveedores" mnemonicParsing="false" text="Proveedores"/>
+                        <MenuItem fx:id="menuGestionRepuestos" mnemonicParsing="false" onAction="#onGestionRepuestosClick" text="Repuestos"/>
+                        <MenuItem fx:id="menuGestionProveedores" onAction="#onGestionProveedoresClick" mnemonicParsing="false" text="Proveedores"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Citas">

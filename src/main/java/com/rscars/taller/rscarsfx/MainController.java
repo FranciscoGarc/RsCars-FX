@@ -56,6 +56,17 @@ public class MainController {
         cargarVista("contadores-view.fxml");
     }
     @FXML
+    void onGestionProveedoresClick() {
+        System.out.println("Cargando gestión de proveedores...");
+        cargarVista("proveedores-view.fxml");
+    }
+    @FXML
+    void onGestionRepuestosClick() {
+        System.out.println("Cargando gestión de repuestos...");
+        cargarVista("repuestos-view.fxml");
+    }
+
+    @FXML
     void onCerrarSesionClick() {
         System.out.println("Cerrando sesión...");
         // Futuro: Lógica para cerrar esta ventana y mostrar el login
