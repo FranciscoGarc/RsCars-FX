@@ -20,7 +20,7 @@ public class CitaFormularioController implements Initializable {
     @FXML private ComboBox<Vehiculo> cbVehiculo;
     @FXML private ComboBox<Servicio> cbServicio;
     @FXML private DatePicker dpFecha;
-    @FXML private TextField tfEstado;
+    @FXML private ComboBox<String> cbEstado;
     @FXML private Button btnGuardar;
 
     private CitasController citasController;
@@ -30,6 +30,11 @@ public class CitaFormularioController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cargarClientes();
         cargarServicios();
+        // Poblar el ComboBox de estados
+        ObservableList<String> estados = FXCollections.observableArrayList("Pendiente", "En Proceso", "Completada", "Cancelada");
+        cbEstado.setItems(estados);
+        // Opcional: seleccionar un valor por defecto
+        cbEstado.setValue("Pendiente");
     }
 
     public void setCitasController(CitasController controller) {
@@ -97,7 +102,7 @@ public class CitaFormularioController implements Initializable {
         this.citaParaEditar = cita;
         this.esNuevo = false;
         lblTitulo.setText("Editar Cita");
-        tfEstado.setText(cita.getEstado());
+        cbEstado.setValue(cita.getEstado().trim());
 
         // Convertir y establecer la fecha
         if (cita.getFechaHora() != null && !cita.getFechaHora().isEmpty()) {
@@ -161,7 +166,7 @@ public class CitaFormularioController implements Initializable {
             pst.setDate(1, Date.valueOf(dpFecha.getValue()));
             pst.setInt(2, cbVehiculo.getValue().getIdVehiculo());
             pst.setInt(3, cbServicio.getValue().getIdServicio());
-            pst.setString(4, tfEstado.getText());
+            pst.setString(4, cbEstado.getValue());
 
             if (!esNuevo) {
                 pst.setInt(5, citaParaEditar.getIdCita()); // Añadimos el ID para el WHERE
