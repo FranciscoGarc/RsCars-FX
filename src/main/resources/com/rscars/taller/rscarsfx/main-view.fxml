@@ -13,7 +13,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="Archivo">
                     <items>
-                        <MenuItem fx:id="menuCerrarSesion" mnemonicParsing="false" onAction="#onCerrarSesionClick" text="Cerrar Sesión"/>
+                        <MenuItem fx:id="menuCerrarSesion" onAction="#onCerrarSesionClick" mnemonicParsing="false" text="Cerrar Sesión" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Gestión">

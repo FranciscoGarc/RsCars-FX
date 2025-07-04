@@ -36,8 +36,8 @@
         <HBox alignment="CENTER" prefHeight="60.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="btnNueva" onAction="#handleNuevaCita" mnemonicParsing="false" text="Nueva Cita" />
-                <Button fx:id="btnEditar" mnemonicParsing="false" text="Editar Cita" />
-                <Button fx:id="btnEliminar" mnemonicParsing="false" text="Cancelar Cita" />
+                <Button fx:id="btnEditar" onAction="#handleEditarCita" mnemonicParsing="false" text="Editar Cita" />
+                <Button fx:id="btnEliminar" onAction="#handleCancelarCita" mnemonicParsing="false" text="Cancelar Cita" />
             </children>
         </HBox>
     </bottom>

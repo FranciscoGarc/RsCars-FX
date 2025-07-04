@@ -6,6 +6,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 public class MainController {
 
@@ -74,8 +78,25 @@ public class MainController {
 
     @FXML
     void onCerrarSesionClick() {
-        System.out.println("Cerrando sesión...");
-        // Futuro: Lógica para cerrar esta ventana y mostrar el login
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+
+            // Crear una nueva ventana (Stage) para la pantalla de login
+            Stage loginStage = new Stage();
+            loginStage.setTitle("RsCars Taller - Inicio de Sesión");
+            loginStage.setScene(scene);
+            loginStage.show();
+
+            // Obtener la ventana actual (el panel principal) a través de cualquier
+            // componente que esté en ella, como el 'mainPanel'
+            Stage mainStage = (Stage) mainPanel.getScene().getWindow();
+            mainStage.close();
+
+        } catch (IOException e) {
+            // Imprimir el error en caso de que no se pueda cargar el FXML
+            e.printStackTrace();
+        }
     }
     private void cargarVista(String fxmlFile) {
         try {

@@ -11,6 +11,7 @@ import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.time.format.DateTimeFormatter;
 
 public class CitaFormularioController implements Initializable {
 
@@ -23,7 +24,8 @@ public class CitaFormularioController implements Initializable {
     @FXML private Button btnGuardar;
 
     private CitasController citasController;
-
+    private Cita citaParaEditar; // Variable para guardar la cita a editar
+    private boolean esNuevo = true;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cargarClientes();
@@ -91,6 +93,54 @@ public class CitaFormularioController implements Initializable {
         }
     }
 
+    public void setCitaParaEditar(Cita cita) {
+        this.citaParaEditar = cita;
+        this.esNuevo = false;
+        lblTitulo.setText("Editar Cita");
+        tfEstado.setText(cita.getEstado());
+
+        // Convertir y establecer la fecha
+        if (cita.getFechaHora() != null && !cita.getFechaHora().isEmpty()) {
+            String fechaParte = cita.getFechaHora().split(" ")[0];
+            dpFecha.setValue(LocalDate.parse(fechaParte));
+        }
+
+        // --- LÓGICA ROBUSTA PARA SELECCIONAR COMBOBOXES ---
+
+        // 1. Seleccionar Cliente
+        for (Cliente cliente : cbCliente.getItems()) {
+            if (cliente.getIdCliente() == cita.getIdCliente()) {
+                cbCliente.getSelectionModel().select(cliente);
+                break;
+            }
+        }
+
+        // 2. Seleccionar Servicio
+        for (Servicio servicio : cbServicio.getItems()) {
+            // Asegúrate de que tu modelo Servicio tenga el método getIdServicio()
+            if (servicio.getIdServicio() == cita.getIdServicio()) {
+                cbServicio.getSelectionModel().select(servicio);
+                break;
+            }
+        }
+
+        // 3. Cargar vehículos del cliente y LUEGO seleccionar el correcto
+        // Esto es crucial porque la lista de vehículos depende del cliente.
+        if (cbCliente.getValue() != null) {
+            // Cargamos la lista de vehículos para el cliente seleccionado
+            cargarVehiculosDeCliente(cbCliente.getValue().getIdCliente());
+
+            // Ahora que la lista está llena, buscamos y seleccionamos el vehículo
+            for (Vehiculo vehiculo : cbVehiculo.getItems()) {
+                // Asegúrate de que tu modelo Vehiculo tenga el método getIdVehiculo()
+                if (vehiculo.getIdVehiculo() == cita.getIdVehiculo()) {
+                    cbVehiculo.getSelectionModel().select(vehiculo);
+                    break;
+                }
+            }
+        }
+    }
+
     @FXML
     void guardarCita() {
         if (cbCliente.getValue() == null || cbVehiculo.getValue() == null || cbServicio.getValue() == null || dpFecha.getValue() == null) {
@@ -98,9 +148,13 @@ public class CitaFormularioController implements Initializable {
             return;
         }
 
-        String sql = "INSERT INTO tbCitas (fechaHora, idVehiculo, idServicio, estado) VALUES (?, ?, ?, ?)";
+        String sql;
+        if (esNuevo) {
+            sql = "INSERT INTO tbCitas (fechaHora, idVehiculo, idServicio, estado) VALUES (?, ?, ?, ?)";
+        } else {
+            sql = "UPDATE tbCitas SET fechaHora = ?, idVehiculo = ?, idServicio = ?, estado = ? WHERE idCita = ?";
+        }
 
-        // --- CORRECCIÓN AQUÍ ---
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
 
@@ -109,8 +163,13 @@ public class CitaFormularioController implements Initializable {
             pst.setInt(3, cbServicio.getValue().getIdServicio());
             pst.setString(4, tfEstado.getText());
 
+            if (!esNuevo) {
+                pst.setInt(5, citaParaEditar.getIdCita()); // Añadimos el ID para el WHERE
+            }
+
             pst.executeUpdate();
 
+            mostrarAlerta("Éxito", "Cita guardada correctamente.");
             citasController.cargarCitas();
             cancelar();
 

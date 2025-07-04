@@ -12,12 +12,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
 
 public class CitasController implements Initializable {
 
@@ -32,6 +36,16 @@ public class CitasController implements Initializable {
     private void handleNuevaCita() {
         abrirFormularioCita(null);
     }
+    @FXML
+    private void handleEditarCita() {
+        Cita seleccionada = tablaCitas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarAlerta("Error", "Debe seleccionar una cita para editar.");
+            return;
+        }
+        abrirFormularioCita(seleccionada);
+    }
+
     private ObservableList<Cita> listaCitas;
     private void abrirFormularioCita(Cita cita) {
         try {
@@ -41,13 +55,13 @@ public class CitasController implements Initializable {
             CitaFormularioController controller = loader.getController();
             controller.setCitasController(this);
 
-            // Lógica para editar (a implementar en el futuro)
-            // if (cita != null) {
-            //     controller.setCitaParaEditar(cita);
-            // }
+            // Si la cita no es nula (estamos editando), pasamos el objeto
+            if (cita != null) {
+                controller.setCitaParaEditar(cita);
+            }
 
             Stage stage = new Stage();
-            stage.setTitle("Agendar Nueva Cita");
+            stage.setTitle(cita == null ? "Nueva Cita" : "Editar Cita");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.showAndWait();
@@ -74,9 +88,9 @@ public class CitasController implements Initializable {
 
     public void cargarCitas() {
         listaCitas.clear();
-        // Consulta SQL con JOIN para unir las tablas
-        String sql = "SELECT c.idCita, c.fechaHora, c.estado, " +
-                "cl.nombre AS nombreCliente, cl.apellido, " +
+        // --- MODIFICAMOS LA CONSULTA PARA OBTENER LOS IDs ---
+        String sql = "SELECT c.idCita, c.fechaHora, c.estado, c.idVehiculo, c.idServicio, " +
+                "cl.idCliente, cl.nombre AS nombreCliente, cl.apellido, " +
                 "v.marca, v.modelo, v.placa, " +
                 "s.descripcion AS descripcionServicio " +
                 "FROM tbCitas c " +
@@ -92,13 +106,17 @@ public class CitasController implements Initializable {
                 String clienteCompleto = rs.getString("nombreCliente") + " " + rs.getString("apellido");
                 String vehiculoCompleto = rs.getString("marca") + " " + rs.getString("modelo") + " (" + rs.getString("placa") + ")";
 
+                // --- PASAMOS LOS IDs AL CONSTRUCTOR ---
                 listaCitas.add(new Cita(
                         rs.getInt("idCita"),
                         rs.getString("fechaHora"),
                         rs.getString("estado"),
                         clienteCompleto,
                         vehiculoCompleto,
-                        rs.getString("descripcionServicio")
+                        rs.getString("descripcionServicio"),
+                        rs.getInt("idCliente"),
+                        rs.getInt("idVehiculo"),
+                        rs.getInt("idServicio")
                 ));
             }
             tablaCitas.setItems(listaCitas);
@@ -107,4 +125,47 @@ public class CitasController implements Initializable {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void handleCancelarCita() {
+        Cita seleccionada = tablaCitas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarAlerta("Error", "Debe seleccionar una cita para cancelar.");
+            return;
+        }
+
+        // Diálogo de confirmación
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar Cancelación");
+        alert.setHeaderText("¿Está seguro de que desea cancelar esta cita?");
+        alert.setContentText("La cita con ID " + seleccionada.getIdCita() + " se marcará como 'Cancelada'.");
+
+        Optional<ButtonType> resultado = alert.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+
+            String sql = "UPDATE tbCitas SET estado = 'Cancelada' WHERE idCita = ?";
+            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+
+            try (PreparedStatement pst = cnx.prepareStatement(sql)) {
+                pst.setInt(1, seleccionada.getIdCita());
+                pst.executeUpdate();
+
+                // Refrescar la tabla para ver el cambio de estado
+                cargarCitas();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                mostrarAlerta("Error de BD", "No se pudo cancelar la cita.");
+            }
+        }
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+
 }
