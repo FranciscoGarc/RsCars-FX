@@ -33,7 +33,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Citas">
                     <items>
-                        <MenuItem fx:id="menuAgendarCita" mnemonicParsing="false" text="Agendar Nueva Cita"/>
+                        <MenuItem fx:id="menuAgendarCita" onAction="#onAgendarCitaClick" mnemonicParsing="false" text="Agendar Nueva Cita" />
                     </items>
                 </Menu>
             </menus>

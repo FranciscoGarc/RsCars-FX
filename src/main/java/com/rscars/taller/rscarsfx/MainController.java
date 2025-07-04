@@ -67,6 +67,12 @@ public class MainController {
     }
 
     @FXML
+    void onAgendarCitaClick() {
+        System.out.println("Cargando gestión de citas...");
+        cargarVista("citas-view.fxml");
+    }
+
+    @FXML
     void onCerrarSesionClick() {
         System.out.println("Cerrando sesión...");
         // Futuro: Lógica para cerrar esta ventana y mostrar el login

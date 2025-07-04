@@ -14,7 +14,10 @@ public class Servicio {
         this.descripcion = new SimpleStringProperty(descripcion);
         this.costo = new SimpleDoubleProperty(costo);
     }
-
+    @Override
+    public String toString() {
+        return getDescripcion();
+    }
     public int getIdServicio() { return idServicio.get(); }
     public String getDescripcion() { return descripcion.get(); }
     public double getCosto() { return costo.get(); }

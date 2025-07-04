@@ -19,6 +19,10 @@ public class Vehiculo {
         this.placa = new SimpleStringProperty(placa);
         this.idCliente = new SimpleIntegerProperty(idCliente);
     }
+    @Override
+    public String toString() {
+        return getMarca() + " " + getModelo() + " (" + getPlaca() + ")";
+    }
 
     // Getters
     public int getIdVehiculo() { return idVehiculo.get(); }
