@@ -18,8 +18,22 @@ public class ClienteFormularioController {
 
     @FXML private Label lblTitulo;
     @FXML private TextField tfNombre, tfApellido, tfTelefono, tfDireccion, tfDui, tfCorreo, tfUsuario;
-    @FXML private PasswordField pfContra;
     @FXML private Button btnGuardar, btnCancelar;
+    @FXML private PasswordField pfContra;
+    @FXML private TextField tfContraVisible;
+
+    @FXML
+    private void togglePasswordVisibility() {
+        if (pfContra.isVisible()) {
+            tfContraVisible.setText(pfContra.getText());
+            tfContraVisible.setVisible(true);
+            pfContra.setVisible(false);
+        } else {
+            pfContra.setText(tfContraVisible.getText());
+            pfContra.setVisible(true);
+            tfContraVisible.setVisible(false);
+        }
+    }
 
     private Cliente clienteParaEditar;
     private ClientesController clientesController; // Referencia al controlador principal
@@ -27,6 +41,22 @@ public class ClienteFormularioController {
 
     public void setClientesController(ClientesController controller) {
         this.clientesController = controller;
+    }
+
+    private int obtenerIdUsuarioPorCliente(int idCliente) {
+        String sql = "SELECT idUsuario FROM tbClientes WHERE idCliente = ?";
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+        try (PreparedStatement pst = cnx.prepareStatement(sql)) {
+            pst.setInt(1, idCliente);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("idUsuario");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public void setClienteParaEditar(Cliente cliente) {
@@ -39,6 +69,11 @@ public class ClienteFormularioController {
         tfDireccion.setText(cliente.getDireccion());
         tfDui.setText(cliente.getDui());
 
+        // Obtener idUsuario desde la BD usando idCliente
+        int idUsuario = obtenerIdUsuarioPorCliente(cliente.getIdCliente());
+        if (idUsuario != 0) {
+            cargarDatosUsuario(idUsuario);
+        }
     }
 
     @FXML
@@ -148,9 +183,7 @@ public class ClienteFormularioController {
                 if (rs.next()) {
                     tfUsuario.setText(rs.getString("usuario"));
                     pfContra.setText(rs.getString("contra"));
-
-                    // Si tienes un campo para el correo, lo llenas aquí
-                    // tfCorreo.setText(rs.getString("correo"));
+                    tfCorreo.setText(rs.getString("correo"));
                 }
             }
         } catch (SQLException e) {

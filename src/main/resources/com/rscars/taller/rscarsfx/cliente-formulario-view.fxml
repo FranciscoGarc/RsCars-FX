@@ -45,6 +45,8 @@
                 <Label text="DUI:" GridPane.rowIndex="7"/>
                 <TextField fx:id="tfUsuario" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                 <PasswordField fx:id="pfContra" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TextField fx:id="tfContraVisible" GridPane.columnIndex="1" GridPane.rowIndex="1" visible="false"/>
+                <Button text="👁" onAction="#togglePasswordVisibility" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                 <TextField fx:id="tfCorreo" promptText="correo@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <TextField fx:id="tfNombre" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                 <TextField fx:id="tfApellido" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
