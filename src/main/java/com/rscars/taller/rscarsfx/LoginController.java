@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 
@@ -28,9 +29,29 @@ public class LoginController {
     private Button btnIngresar;
 
     @FXML
+    private TextField tfContraVisible;
+
+    @FXML
+    private void togglePasswordVisibility() {
+        if (pfContra.isVisible()) {
+            tfContraVisible.setText(pfContra.getText());
+            tfContraVisible.setVisible(true);
+            tfContraVisible.setManaged(true);
+            pfContra.setVisible(false);
+            pfContra.setManaged(false);
+        } else {
+            pfContra.setText(tfContraVisible.getText());
+            pfContra.setVisible(true);
+            pfContra.setManaged(true);
+            tfContraVisible.setVisible(false);
+            tfContraVisible.setManaged(false);
+        }
+    }
+
+    @FXML
     protected void onLoginButtonClick() {
         String usuario = tfUsuario.getText();
-        String contra = pfContra.getText();
+        String contra = pfContra.isVisible() ? pfContra.getText() : tfContraVisible.getText();
 
         if (usuario.isEmpty() || contra.isEmpty()) {
             mostrarAlerta("Error de Validación", "Por favor, ingrese usuario y contraseña.");
@@ -38,9 +59,7 @@ public class LoginController {
         }
 
         if (validarCredenciales(usuario, contra)) {
-            // ---- INICIO DE LA MODIFICACIÓN ----
             abrirVentanaPrincipal();
-            // ---- FIN DE LA MODIFICACIÓN ----
         } else {
             mostrarAlerta("Error de Autenticación", "Usuario o contraseña incorrectos.");
         }

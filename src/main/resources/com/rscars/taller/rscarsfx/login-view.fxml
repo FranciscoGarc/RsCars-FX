@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="400.0" prefWidth="350.0" spacing="20.0" xmlns="http://javafx.com/javafx/21"
@@ -18,7 +19,15 @@
             </font>
         </Label>
         <TextField fx:id="tfUsuario" maxWidth="200.0" promptText="Usuario"/>
-        <PasswordField fx:id="pfContra" maxWidth="200.0" promptText="Contraseña"/>
+
+        <HBox alignment="CENTER" maxWidth="200.0" spacing="5.0">
+            <children>
+                <PasswordField fx:id="pfContra" promptText="Contraseña" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="tfContraVisible" managed="false" promptText="Contraseña" visible="false" HBox.hgrow="ALWAYS" />
+                <Button onAction="#togglePasswordVisibility" text="👁" />
+            </children>
+        </HBox>
+
         <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar"/>
     </children>
     <padding>
