@@ -108,6 +108,55 @@ public class ClientesController implements Initializable {
         abrirFormularioCliente(seleccionado);
     }
 
+    private void borrarClienteYUsuario(Cliente cliente) {
+        int idCliente = cliente.getIdCliente();
+        int idUsuario = 0;
+
+        // Obtener idUsuario asociado
+        String sqlGetUsuario = "SELECT idUsuario FROM tbClientes WHERE idCliente = ?";
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+        try (PreparedStatement pst = cnx.prepareStatement(sqlGetUsuario)) {
+            pst.setInt(1, idCliente);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    idUsuario = rs.getInt("idUsuario");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo obtener el usuario asociado.");
+            return;
+        }
+
+        try {
+            cnx.setAutoCommit(false);
+
+            // Eliminar cliente
+            String sqlDelCliente = "DELETE FROM tbClientes WHERE idCliente = ?";
+            try (PreparedStatement pst = cnx.prepareStatement(sqlDelCliente)) {
+                pst.setInt(1, idCliente);
+                pst.executeUpdate();
+            }
+
+            // Eliminar usuario
+            String sqlDelUsuario = "DELETE FROM tbUsuarios WHERE idUsuario = ?";
+            try (PreparedStatement pst = cnx.prepareStatement(sqlDelUsuario)) {
+                pst.setInt(1, idUsuario);
+                pst.executeUpdate();
+            }
+
+            cnx.commit();
+            mostrarAlerta("Éxito", "Cliente y usuario eliminados correctamente.");
+            cargarClientes();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try { if (cnx != null) cnx.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            mostrarAlerta("Error", "No se pudo eliminar el cliente.");
+        } finally {
+            try { if (cnx != null) cnx.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+        }
+    }
+
     @FXML
     private void handleEliminarCliente() {
         Cliente seleccionado = tablaClientes.getSelectionModel().getSelectedItem();
@@ -115,7 +164,6 @@ public class ClientesController implements Initializable {
             mostrarAlerta("Error", "Debe seleccionar un cliente para eliminar.");
             return;
         }
-        // 1. Diálogo de confirmación que solicitas
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Está seguro de que desea eliminar al cliente?");
@@ -123,24 +171,7 @@ public class ClientesController implements Initializable {
 
         Optional<ButtonType> resultado = alert.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            // 2. Corrección de la conexión
-            String sql = "DELETE FROM tbClientes WHERE idCliente = ?";
-            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
-
-            try (PreparedStatement pst = cnx.prepareStatement(sql)) {
-                pst.setInt(1, seleccionado.getIdCliente());
-                pst.executeUpdate();
-                cargarClientes();
-                Alert info = new Alert(Alert.AlertType.INFORMATION);
-                info.setTitle("Eliminación exitosa");
-                info.setHeaderText(null);
-                info.setContentText("Cliente eliminado exitosamente");
-                info.showAndWait();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                mostrarAlerta("Error de BD", "No se pudo eliminar el cliente. Es posible que tenga registros asociados (vehículos, etc.).");
-            }
+            borrarClienteYUsuario(seleccionado);
         }
     }
 
