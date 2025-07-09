@@ -10,9 +10,22 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 350, 400); // Ajusta el tamaño si es necesario
-        stage.setTitle("RsCars Taller - Inicio de Sesión");
+        // Verificar si existen usuarios
+        boolean existenUsuarios = ConexionDB.obtenerInstancia().hayUsuarios();
+
+        FXMLLoader fxmlLoader;
+        if (!existenUsuarios) {
+            // No hay usuarios, cargar la pantalla de primer uso
+            System.out.println("No se encontraron usuarios. Iniciando pantalla de primer uso.");
+            fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("primer-uso-view.fxml"));
+            stage.setTitle("RsCars Taller - Configuración Inicial");
+        } else {
+            // Ya hay usuarios, cargar el login normal
+            fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
+            stage.setTitle("RsCars Taller - Inicio de Sesión");
+        }
+
+        Scene scene = new Scene(fxmlLoader.load(), 400, 450); // Ajusta el tamaño si es necesario
         stage.setScene(scene);
         stage.show();
     }

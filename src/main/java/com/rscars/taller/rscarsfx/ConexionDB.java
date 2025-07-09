@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class ConexionDB {
 
@@ -65,6 +67,29 @@ public class ConexionDB {
     public Connection getCnx() {
         return cnx;
     }
+
+    // --- NUEVO MÉTODO ---
+    /**
+     * Verifica si existen usuarios registrados en la base de datos.
+     * @return true si hay al menos un usuario, false en caso contrario.
+     */
+    public boolean hayUsuarios() {
+        String sql = "SELECT COUNT(*) FROM tbUsuarios";
+        if (cnx == null) {
+            System.out.println("La conexión a la BD no está disponible para verificar usuarios.");
+            return true; // Asumir que hay usuarios si no hay conexión para evitar bloqueo.
+        }
+        try (Statement stmt = cnx.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     // 6. Método para cerrar la conexión
     public void cerrarConexion() {
