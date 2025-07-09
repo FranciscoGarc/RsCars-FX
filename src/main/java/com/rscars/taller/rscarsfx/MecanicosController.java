@@ -102,17 +102,56 @@ public class MecanicosController implements Initializable {
         alert.setContentText(seleccionado.getNombre() + " " + seleccionado.getApellido());
         Optional<ButtonType> resultado = alert.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            String sql = "DELETE FROM tbMecanicos WHERE idMecanico = ?";
-            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
-            try (PreparedStatement pst = cnx.prepareStatement(sql)) {
-                pst.setInt(1, seleccionado.getIdMecanico());
-                pst.executeUpdate();
-                cargarMecanicos();
-                mostrarAlerta("Éxito", "Mecánico eliminado correctamente.");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                mostrarAlerta("Error de BD", "No se pudo eliminar el mecánico.");
+            borrarMecanicoYUsuario(seleccionado);
+        }
+    }
+
+    private void borrarMecanicoYUsuario(Mecanico mecanico) {
+        int idMecanico = mecanico.getIdMecanico();
+        int idUsuario = 0;
+
+        // Obtener idUsuario asociado
+        String sqlGetUsuario = "SELECT idUsuario FROM tbMecanicos WHERE idMecanico = ?";
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+        try (PreparedStatement pst = cnx.prepareStatement(sqlGetUsuario)) {
+            pst.setInt(1, idMecanico);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    idUsuario = rs.getInt("idUsuario");
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo obtener el usuario asociado.");
+            return;
+        }
+
+        try {
+            cnx.setAutoCommit(false);
+
+            // Eliminar mecánico
+            String sqlDelMecanico = "DELETE FROM tbMecanicos WHERE idMecanico = ?";
+            try (PreparedStatement pst = cnx.prepareStatement(sqlDelMecanico)) {
+                pst.setInt(1, idMecanico);
+                pst.executeUpdate();
+            }
+
+            // Eliminar usuario
+            String sqlDelUsuario = "DELETE FROM tbUsuarios WHERE idUsuario = ?";
+            try (PreparedStatement pst = cnx.prepareStatement(sqlDelUsuario)) {
+                pst.setInt(1, idUsuario);
+                pst.executeUpdate();
+            }
+
+            cnx.commit();
+            mostrarAlerta("Éxito", "Mecánico y usuario eliminados correctamente.");
+            cargarMecanicos();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try { if (cnx != null) cnx.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            mostrarAlerta("Error", "No se pudo eliminar el mecánico.");
+        } finally {
+            try { if (cnx != null) cnx.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
         }
     }
 
