@@ -57,8 +57,15 @@
         </GridPane>
         <HBox alignment="CENTER" spacing="20.0">
             <children>
-                <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardarPrimerUsuario" text="Guardar" />
+                <Button fx:id="btnGuardar" text="Enviar Código de Verificación" onAction="#iniciarVerificacion" />
             </children>
+            <VBox fx:id="panelVerificacion" alignment="CENTER" spacing="10" visible="false" managed="false">
+                <children>
+                    <Label text="Se ha enviado un código a tu correo."/>
+                    <TextField fx:id="tfCodigo" promptText="Ingresa el código de 6 dígitos"/>
+                    <Button fx:id="btnVerificar" text="Verificar y Crear Cuenta" onAction="#verificarYGuardar"/>
+                </children>
+            </VBox>
         </HBox>
     </children>
     <padding>
