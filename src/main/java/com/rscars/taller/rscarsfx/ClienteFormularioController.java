@@ -12,8 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import javafx.scene.control.PasswordField;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class ClienteFormularioController {
 
@@ -78,18 +78,43 @@ public class ClienteFormularioController {
         tfTelefono.setText(cliente.getTelefono());
         tfDireccion.setText(cliente.getDireccion());
         tfDui.setText(cliente.getDui());
+        // NO cargamos la contraseña. Los campos se dejan en blanco.
+        // Para guiar al usuario, puedes cambiar el texto de ayuda (prompt text).
+        pfContra.setPromptText("Dejar en blanco para no cambiar");
+        tfContraVisible.setPromptText("Dejar en blanco para no cambiar");
 
-        // Obtener idUsuario desde la BD usando idCliente
         int idUsuario = obtenerIdUsuarioPorCliente(cliente.getIdCliente());
         if (idUsuario != 0) {
-            cargarDatosUsuario(idUsuario);
+            // Solo cargamos los datos que no son sensibles
+            String sql = "SELECT usuario, correo FROM tbUsuarios WHERE idUsuario = ?";
+            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+
+            try (PreparedStatement pst = cnx.prepareStatement(sql)) {
+                pst.setInt(1, idUsuario);
+
+                try (ResultSet rs = pst.executeQuery()) {
+                    if (rs.next()) {
+                        tfUsuario.setText(rs.getString("usuario"));
+                        tfCorreo.setText(rs.getString("correo"));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                mostrarAlerta("Error", "No se pudieron cargar los datos del usuario.");
+            }
         }
     }
 
     @FXML
     void guardarCliente() {
-        if (tfNombre.getText().isEmpty() || tfDui.getText().isEmpty() || tfUsuario.getText().isEmpty() || obtenerPassword().isEmpty()) {
-            mostrarAlerta("Error de Validación", "Nombre, DUI, Usuario y Contraseña son campos obligatorios.");
+        // La validación para un nuevo cliente sigue siendo la misma
+        if (esNuevo && (tfNombre.getText().isEmpty() || tfDui.getText().isEmpty() || tfUsuario.getText().isEmpty() || obtenerPassword().isEmpty())) {
+            mostrarAlerta("Error de Validación", "Para un nuevo cliente, todos los campos son obligatorios.");
+            return;
+        }
+        // Validación más simple para editar
+        if (!esNuevo && (tfNombre.getText().isEmpty() || tfDui.getText().isEmpty() || tfUsuario.getText().isEmpty())) {
+            mostrarAlerta("Error de Validación", "Nombre, DUI y Usuario son obligatorios.");
             return;
         }
 
@@ -99,6 +124,7 @@ public class ClienteFormularioController {
 
             String usuario = tfUsuario.getText().trim();
             String contra = obtenerPassword().trim();
+            String contraHasheada = BCrypt.hashpw(contra, BCrypt.gensalt());
             String correo = tfCorreo.getText().trim();
 
             if (esNuevo) {
@@ -108,7 +134,7 @@ public class ClienteFormularioController {
                 try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
                     pstUsuario.setInt(1, 3); // idTipo 3 = Cliente
                     pstUsuario.setString(2, usuario);
-                    pstUsuario.setString(3, contra);
+                    pstUsuario.setString(3, contraHasheada);
                     pstUsuario.setString(4, correo);
                     pstUsuario.executeUpdate();
 
@@ -141,13 +167,25 @@ public class ClienteFormularioController {
                 // Lógica de actualización
                 int idUsuario = obtenerIdUsuarioPorCliente(clienteParaEditar.getIdCliente());
 
-                String sqlUsuario = "UPDATE tbUsuarios SET usuario = ?, contra = ?, correo = ? WHERE idUsuario = ?";
-                try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario)) {
-                    pstUsuario.setString(1, usuario);
-                    pstUsuario.setString(2, contra);
-                    pstUsuario.setString(3, correo);
-                    pstUsuario.setInt(4, idUsuario);
-                    pstUsuario.executeUpdate();
+                // Solo actualizamos la contraseña si el campo NO está vacío
+                if (!contra.isEmpty()) {
+                    String sqlUsuario = "UPDATE tbUsuarios SET usuario = ?, contra = ?, correo = ? WHERE idUsuario = ?";
+                    try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario)) {
+                        pstUsuario.setString(1, usuario);
+                        pstUsuario.setString(2, contraHasheada); // Se actualiza la contraseña
+                        pstUsuario.setString(3, correo);
+                        pstUsuario.setInt(4, idUsuario);
+                        pstUsuario.executeUpdate();
+                    }
+                } else {
+                    // Si el campo está vacío, no incluimos la contraseña en la consulta
+                    String sqlUsuario = "UPDATE tbUsuarios SET usuario = ?, correo = ? WHERE idUsuario = ?";
+                    try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario)) {
+                        pstUsuario.setString(1, usuario);
+                        pstUsuario.setString(2, correo); // No se toca la contraseña
+                        pstUsuario.setInt(3, idUsuario);
+                        pstUsuario.executeUpdate();
+                    }
                 }
 
                 String sqlCliente = "UPDATE tbClientes SET nombre = ?, apellido = ?, telefono = ?, direccion = ?, dui = ? WHERE idCliente = ?";

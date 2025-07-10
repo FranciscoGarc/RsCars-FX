@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -50,14 +51,19 @@ public class PrimerUsoController {
         try {
             cnx.setAutoCommit(false); // Iniciar transacción
 
+            String usuario = tfUsuario.getText().trim();
+            String contra = obtenerPassword().trim();
+            String contraHasheada = BCrypt.hashpw(contra, BCrypt.gensalt());
+            String correo = tfCorreo.getText().trim();
+
             // 1. Crear el usuario de tipo "Mecanico" (idTipo = 1)
             String sqlUsuario = "INSERT INTO tbUsuarios (idTipo, usuario, contra, correo) VALUES (?, ?, ?, ?)";
             int nuevoUsuarioId = 0;
             try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
                 pstUsuario.setInt(1, 1); // idTipo 1 para Mecánico
-                pstUsuario.setString(2, tfUsuario.getText().trim());
-                pstUsuario.setString(3, obtenerPassword().trim());
-                pstUsuario.setString(4, tfCorreo.getText().trim());
+                pstUsuario.setString(2, usuario);
+                pstUsuario.setString(3, contraHasheada);
+                pstUsuario.setString(4, correo);
                 pstUsuario.executeUpdate();
 
                 try (ResultSet generatedKeys = pstUsuario.getGeneratedKeys()) {

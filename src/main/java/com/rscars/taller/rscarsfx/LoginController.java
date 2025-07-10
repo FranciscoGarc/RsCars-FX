@@ -1,5 +1,7 @@
 package com.rscars.taller.rscarsfx;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -87,26 +89,28 @@ public class LoginController {
         }
     }
 
-    private boolean validarCredenciales(String usuario, String contra) {
-        // La consulta SQL no cambia
-        String sql = "SELECT * FROM tbUsuarios WHERE usuario = ? AND contra = ?";
-
-        // Obtenemos la conexión singleton
+    private boolean validarCredenciales(String usuario, String contraPlana) {
+        String sql = "SELECT contra FROM tbUsuarios WHERE usuario = ?";
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
 
-        // Verificamos que la conexión no sea nula
         if (cnx == null) {
             mostrarAlerta("Error de Conexión", "No se pudo conectar a la base de datos.");
             return false;
         }
 
-        // El try-with-resources ahora solo gestiona PreparedStatement y ResultSet
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
             pst.setString(1, usuario);
-            pst.setString(2, contra);
 
             try (ResultSet rs = pst.executeQuery()) {
-                return rs.next(); // Devuelve true si encuentra un usuario
+                // Si el usuario existe, rs.next() será verdadero
+                if (rs.next()) {
+                    String contraHasheada = rs.getString("contra");
+                    // Comparamos la contraseña plana con el hash de la BD
+                    return BCrypt.checkpw(contraPlana, contraHasheada);
+                } else {
+                    // El usuario no fue encontrado
+                    return false;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

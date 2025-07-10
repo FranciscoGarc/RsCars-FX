@@ -6,7 +6,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.sql.*;
-
+import org.mindrot.jbcrypt.BCrypt;
 import java.util.ResourceBundle;
 
 public class ContadorFormularioController implements Initializable {
@@ -73,11 +73,29 @@ public class ContadorFormularioController implements Initializable {
         tfTelefono.setText(contador.getTelefono());
         tfDireccion.setText(contador.getDireccion());
         tfDui.setText(contador.getDui());
+        // NO cargamos la contraseña. Los campos se dejan en blanco.
+        pfContra.setPromptText("Dejar en blanco para no cambiar");
+        tfContraVisible.setPromptText("Dejar en blanco para no cambiar");
 
         int idUsuario = obtenerIdUsuarioPorContador(contador.getIdEmpleado());
         if (idUsuario != 0) {
-            cargarDatosUsuario(idUsuario);
-        }
+            // Solo cargamos los datos que no son sensibles
+            String sql = "SELECT usuario, correo FROM tbUsuarios WHERE idUsuario = ?";
+            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+
+            try (PreparedStatement pst = cnx.prepareStatement(sql)) {
+                pst.setInt(1, idUsuario);
+
+                try (ResultSet rs = pst.executeQuery()) {
+                    if (rs.next()) {
+                        tfUsuario.setText(rs.getString("usuario"));
+                        tfCorreo.setText(rs.getString("correo"));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                mostrarAlerta("Error", "No se pudieron cargar los datos del usuario.");
+            }        }
     }
 
     @FXML
@@ -93,6 +111,7 @@ public class ContadorFormularioController implements Initializable {
 
             String usuario = tfUsuario.getText().trim();
             String contra = obtenerPassword().trim();
+            String contraHasheada = BCrypt.hashpw(contra, BCrypt.gensalt());
             String correo = tfCorreo.getText().trim();
 
             if (esNuevo) {
@@ -102,7 +121,7 @@ public class ContadorFormularioController implements Initializable {
                 try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
                     pstUsuario.setInt(1, 2); // idTipo 2 = Contador
                     pstUsuario.setString(2, usuario);
-                    pstUsuario.setString(3, contra);
+                    pstUsuario.setString(3, contraHasheada);
                     pstUsuario.setString(4, correo);
                     pstUsuario.executeUpdate();
 
@@ -134,13 +153,25 @@ public class ContadorFormularioController implements Initializable {
             } else {
                 int idUsuario = obtenerIdUsuarioPorContador(contadorParaEditar.getIdEmpleado());
 
-                String sqlUsuario = "UPDATE tbUsuarios SET usuario = ?, contra = ?, correo = ? WHERE idUsuario = ?";
-                try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario)) {
-                    pstUsuario.setString(1, usuario);
-                    pstUsuario.setString(2, contra);
-                    pstUsuario.setString(3, correo);
-                    pstUsuario.setInt(4, idUsuario);
-                    pstUsuario.executeUpdate();
+                // Solo actualizamos la contraseña si el campo NO está vacío
+                if (!contra.isEmpty()) {
+                    String sqlUsuario = "UPDATE tbUsuarios SET usuario = ?, contra = ?, correo = ? WHERE idUsuario = ?";
+                    try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario)) {
+                        pstUsuario.setString(1, usuario);
+                        pstUsuario.setString(2, contraHasheada); // Se actualiza la contraseña
+                        pstUsuario.setString(3, correo);
+                        pstUsuario.setInt(4, idUsuario);
+                        pstUsuario.executeUpdate();
+                    }
+                } else {
+                    // Si el campo está vacío, no incluimos la contraseña en la consulta
+                    String sqlUsuario = "UPDATE tbUsuarios SET usuario = ?, correo = ? WHERE idUsuario = ?";
+                    try (PreparedStatement pstUsuario = cnx.prepareStatement(sqlUsuario)) {
+                        pstUsuario.setString(1, usuario);
+                        pstUsuario.setString(2, correo); // No se toca la contraseña
+                        pstUsuario.setInt(3, idUsuario);
+                        pstUsuario.executeUpdate();
+                    }
                 }
 
                 String sqlContador = "UPDATE tbContadores SET nombre = ?, apellido = ?, telefono = ?, direccion = ?, dui = ? WHERE idEmpleado = ?";
