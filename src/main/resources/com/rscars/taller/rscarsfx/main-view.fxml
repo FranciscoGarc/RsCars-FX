@@ -23,8 +23,8 @@
                         <MenuItem fx:id="menuGestionServicios" onAction="#onGestionServiciosClick" mnemonicParsing="false" text="Servicios"/>
                         <Menu fx:id="menuGestionEmpleados" mnemonicParsing="false" text="Empleados">
                             <items>
-                                <MenuItem fx:id="menuMecanicos" onAction="#onGestionMecanicosClick" mnemonicParsing="false" text="Mecánicos"/>
-                                <MenuItem fx:id="menuContadores" onAction="#onGestionContadoresClick" mnemonicParsing="false" text="Contadores"/>
+                                <MenuItem fx:id="menuGestionMecanicos" onAction="#onGestionMecanicosClick" mnemonicParsing="false" text="Mecánicos"/>
+                                <MenuItem fx:id="menuGestionContadores" onAction="#onGestionContadoresClick" mnemonicParsing="false" text="Contadores"/>
                             </items>
                         </Menu>
                         <MenuItem fx:id="menuGestionRepuestos" mnemonicParsing="false" onAction="#onGestionRepuestosClick" text="Repuestos"/>

@@ -41,11 +41,11 @@ public class RepuestosController implements Initializable {
     public void cargarRepuestos() {
         listaRepuestos.clear();
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
-        String sql = "SELECT idRepuesto, descripción, precio, stock, idProveedor FROM tbRepuestos";
+        String sql = "SELECT idRepuesto, descripcion, precio, stock, idProveedor FROM tbRepuestos";
         try (Statement stmt = cnx.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int id = rs.getInt("idRepuesto");
-                String descripcion = rs.getString("descripción");
+                String descripcion = rs.getString("descripcion");
                 int precio = rs.getInt("precio");
                 int stock = rs.getInt("stock");
                 int idProveedor = rs.getInt("idProveedor");

@@ -18,7 +18,7 @@ CREATE TABLE tbUsuarios(
 	idUsuario int identity(1,1) primary key,
 	idTipo int,
 	usuario varchar(30) unique,
-	contra varchar(20),
+	contra varchar(60),
 	correo varchar(50)
 );
 

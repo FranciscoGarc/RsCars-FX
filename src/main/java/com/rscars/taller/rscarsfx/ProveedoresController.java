@@ -43,12 +43,12 @@ public class ProveedoresController implements Initializable {
     public void cargarProveedores() {
         listaProveedores.clear();
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
-        String sql = "SELECT idProveedor, nombre, teléfono, correo FROM tbProveedores";
+        String sql = "SELECT idProveedor, nombre, telefono, correo FROM tbProveedores";
         try (Statement stmt = cnx.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int id = rs.getInt("idProveedor");
                 String nombre = rs.getString("nombre");
-                String telefono = rs.getString("teléfono");
+                String telefono = rs.getString("telefono");
                 String correo = rs.getString("correo");
                 listaProveedores.add(new Proveedor(id, nombre.trim(), telefono.trim(), correo.trim()));
             }

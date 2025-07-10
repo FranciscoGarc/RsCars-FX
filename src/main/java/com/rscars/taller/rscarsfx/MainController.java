@@ -30,9 +30,34 @@ public class MainController {
 
     @FXML
     private MenuItem menuAgendarCita;
+    @FXML
+    private MenuItem menuGestionEmpleados;
+    @FXML
+    private MenuItem menuGestionMecanicos;
+    @FXML
+    private MenuItem menuGestionContadores;
 
 
     // Aquí agregaremos los métodos para manejar los clics del menú
+
+    public void inicializarConUsuario(int idTipoUsuario) {
+        // Por defecto, un mecánico (idTipo 1) ve todo.
+        // Solo aplicamos restricciones si es un contador (idTipo 2).
+        if (idTipoUsuario == 2) { // Es Contador
+            System.out.println("Usuario es Contador. Aplicando restricciones.");
+            if (menuGestionMecanicos != null) {
+                menuGestionMecanicos.setVisible(false);
+            }
+            if (menuGestionContadores != null) {
+                menuGestionContadores.setVisible(false);
+            }
+            if (menuGestionEmpleados != null) {
+                menuGestionEmpleados.setVisible(false);
+            }
+        } else {
+            System.out.println("Usuario es Mecánico. Acceso completo.");
+        }
+    }
 
     @FXML
     void onGestionClientesClick() {

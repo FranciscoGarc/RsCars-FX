@@ -1,7 +1,6 @@
 package com.rscars.taller.rscarsfx;
 
 import org.mindrot.jbcrypt.BCrypt;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -10,10 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,26 +56,36 @@ public class LoginController {
             return;
         }
 
-        if (validarCredenciales(usuario, contra)) {
-            abrirVentanaPrincipal();
+        int idTipoUsuario = validarCredenciales(usuario, contra);
+
+        if (idTipoUsuario > 0) { // Si es mayor a 0, el login es correcto
+            if (idTipoUsuario == 3) { // idTipo 3 es Cliente
+                mostrarAlerta("Acceso Denegado", "Usted no tiene acceso a la aplicación administrativa.");
+                // No se hace nada más, el usuario se queda en el login.
+            } else {
+                // Si es Mecánico (1) o Contador (2), abrimos la ventana principal
+                abrirVentanaPrincipal(idTipoUsuario);
+            }
         } else {
             mostrarAlerta("Error de Autenticación", "Usuario o contraseña incorrectos.");
         }
     }
 
-    private void abrirVentanaPrincipal() {
+
+    private void abrirVentanaPrincipal(int idTipoUsuario) {
         try {
-            // Cargar la nueva vista
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("main-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
-            // Crear un nuevo Stage (ventana)
+            // --- OBTENEMOS EL CONTROLADOR Y PASAMOS EL ROL ---
+            MainController mainController = fxmlLoader.getController();
+            mainController.inicializarConUsuario(idTipoUsuario);
+
             Stage stage = new Stage();
             stage.setTitle("RsCars Taller - Panel Principal");
             stage.setScene(scene);
             stage.show();
 
-            // Cerrar la ventana de login actual
             Stage loginStage = (Stage) btnIngresar.getScene().getWindow();
             loginStage.close();
 
@@ -89,34 +95,31 @@ public class LoginController {
         }
     }
 
-    private boolean validarCredenciales(String usuario, String contraPlana) {
-        String sql = "SELECT contra FROM tbUsuarios WHERE usuario = ?";
+    private int validarCredenciales(String usuario, String contraPlana) {
+        String sql = "SELECT idTipo, contra FROM tbUsuarios WHERE usuario = ?";
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
 
         if (cnx == null) {
             mostrarAlerta("Error de Conexión", "No se pudo conectar a la base de datos.");
-            return false;
+            return 0; // 0 indica error
         }
 
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
             pst.setString(1, usuario);
-
             try (ResultSet rs = pst.executeQuery()) {
-                // Si el usuario existe, rs.next() será verdadero
                 if (rs.next()) {
                     String contraHasheada = rs.getString("contra");
-                    // Comparamos la contraseña plana con el hash de la BD
-                    return BCrypt.checkpw(contraPlana, contraHasheada);
-                } else {
-                    // El usuario no fue encontrado
-                    return false;
+                    if (BCrypt.checkpw(contraPlana, contraHasheada)) {
+                        // Si la contraseña es correcta, devolvemos el tipo de usuario
+                        return rs.getInt("idTipo");
+                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             mostrarAlerta("Error de Consulta", "Error al verificar las credenciales.");
-            return false;
         }
+        return 0; // Si algo falla, devuelve 0
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
