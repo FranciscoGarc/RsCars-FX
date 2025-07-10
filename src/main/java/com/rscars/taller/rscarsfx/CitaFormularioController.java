@@ -21,6 +21,7 @@ public class CitaFormularioController implements Initializable {
     @FXML private ComboBox<Servicio> cbServicio;
     @FXML private DatePicker dpFecha;
     @FXML private ComboBox<String> cbEstado;
+    @FXML private TextField tfHora;
     @FXML private Button btnGuardar;
 
     private CitasController citasController;
@@ -33,7 +34,7 @@ public class CitaFormularioController implements Initializable {
         // Poblar el ComboBox de estados
         ObservableList<String> estados = FXCollections.observableArrayList("Pendiente", "En Proceso", "Completada", "Cancelada");
         cbEstado.setItems(estados);
-        // Opcional: seleccionar un valor por defecto
+        // Seleccionar un valor por defecto
         cbEstado.setValue("Pendiente");
     }
 
@@ -106,11 +107,13 @@ public class CitaFormularioController implements Initializable {
 
         // Convertir y establecer la fecha
         if (cita.getFechaHora() != null && !cita.getFechaHora().isEmpty()) {
-            String fechaParte = cita.getFechaHora().split(" ")[0];
-            dpFecha.setValue(LocalDate.parse(fechaParte));
+            String[] partes = cita.getFechaHora().split(" ");
+            dpFecha.setValue(LocalDate.parse(partes[0]));
+            if (partes.length > 1) {
+                String hora = partes[1].substring(0,5); // Extrae HH:mm
+                tfHora.setText(hora);
+            }
         }
-
-        // --- LÓGICA ROBUSTA PARA SELECCIONAR COMBOBOXES ---
 
         // 1. Seleccionar Cliente
         for (Cliente cliente : cbCliente.getItems()) {
@@ -153,6 +156,20 @@ public class CitaFormularioController implements Initializable {
             return;
         }
 
+        // Validar formato de hora (HH:mm)
+        String horaTexto = tfHora.getText().trim();
+        if (!horaTexto.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+            mostrarAlerta("Error", "La hora debe tener el formato HH:mm (ejemplo: 14:30).");
+            return;
+        }
+
+        // Combinar fecha y hora
+        LocalDate fecha = dpFecha.getValue();
+        String fechaHoraStr = fecha.toString() + " " + horaTexto + ":00"; // yyyy-MM-dd HH:mm:ss
+
+        // Convertir a Timestamp
+        java.sql.Timestamp fechaHoraTimestamp = java.sql.Timestamp.valueOf(fechaHoraStr);
+
         String sql;
         if (esNuevo) {
             sql = "INSERT INTO tbCitas (fechaHora, idVehiculo, idServicio, estado) VALUES (?, ?, ?, ?)";
@@ -162,14 +179,13 @@ public class CitaFormularioController implements Initializable {
 
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
-
-            pst.setDate(1, Date.valueOf(dpFecha.getValue()));
+            pst.setTimestamp(1, fechaHoraTimestamp);
             pst.setInt(2, cbVehiculo.getValue().getIdVehiculo());
             pst.setInt(3, cbServicio.getValue().getIdServicio());
             pst.setString(4, cbEstado.getValue());
 
             if (!esNuevo) {
-                pst.setInt(5, citaParaEditar.getIdCita()); // Añadimos el ID para el WHERE
+                pst.setInt(5, citaParaEditar.getIdCita());
             }
 
             pst.executeUpdate();
