@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
+
 public class LoginController {
 
     @FXML
@@ -30,6 +31,19 @@ public class LoginController {
 
     @FXML
     private TextField tfContraVisible;
+
+    /**
+     * Una clase simple para contener los datos del usuario después del login.
+     */
+    public static class UserSession {
+        public final int idTipo;
+        public final String nombre;
+
+        public UserSession(int idTipo, String nombre) {
+            this.idTipo = idTipo;
+            this.nombre = nombre;
+        }
+    }
 
     @FXML
     private void togglePasswordVisibility() {
@@ -58,15 +72,13 @@ public class LoginController {
             return;
         }
 
-        int idTipoUsuario = validarCredenciales(usuario, contra);
-
-        if (idTipoUsuario > 0) { // Si es mayor a 0, el login es correcto
-            if (idTipoUsuario == 3) { // idTipo 3 es Cliente
+        // --- CAMBIO: Ahora obtenemos un objeto UserSession ---
+        UserSession session = validarCredenciales(usuario, contra);
+        if (session != null) { // Si no es nulo, el login es correcto
+            if (session.idTipo == 3) { // idTipo 3 es Cliente
                 mostrarAlerta("Acceso Denegado", "Usted no tiene acceso a la aplicación administrativa.");
-                // No se hace nada más, el usuario se queda en el login.
             } else {
-                // Si es Mecánico (1) o Contador (2), abrimos la ventana principal
-                abrirVentanaPrincipal(idTipoUsuario);
+                abrirVentanaPrincipal(session); // Pasamos el objeto de sesión completo
             }
         } else {
             mostrarAlerta("Error de Autenticación", "Usuario o contraseña incorrectos.");
@@ -90,14 +102,15 @@ public class LoginController {
         }
     }
 
-    private void abrirVentanaPrincipal(int idTipoUsuario) {
+    // --- CAMBIO: El método ahora recibe el objeto UserSession ---
+    private void abrirVentanaPrincipal(UserSession session) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("main-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
-            // --- OBTENEMOS EL CONTROLADOR Y PASAMOS EL ROL ---
             MainController mainController = fxmlLoader.getController();
-            mainController.inicializarConUsuario(idTipoUsuario);
+            // --- CAMBIO: Pasamos el rol y el nombre ---
+            mainController.inicializarConUsuario(session.idTipo, session.nombre);
 
             Stage stage = new Stage();
             stage.setTitle("RsCars Taller - Panel Principal");
@@ -109,18 +122,20 @@ public class LoginController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo abrir la ventana principal.");
         }
     }
 
-    private int validarCredenciales(String usuario, String contraPlana) {
-        String sql = "SELECT idTipo, contra FROM tbUsuarios WHERE usuario = ?";
-        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+    // --- CAMBIO: El método ahora devuelve un objeto UserSession ---
+    private UserSession validarCredenciales(String usuario, String contraPlana) {
+        // Esta consulta une las tres tablas para obtener todos los datos de una vez
+        String sql = "SELECT U.idTipo, U.contra, COALESCE(M.nombre, C.nombre) as nombreUsuario " +
+                "FROM tbUsuarios U " +
+                "LEFT JOIN tbMecanicos M ON U.idUsuario = M.idUsuario " +
+                "LEFT JOIN tbContadores C ON U.idUsuario = C.idUsuario " +
+                "WHERE U.usuario = ?";
 
-        if (cnx == null) {
-            mostrarAlerta("Error de Conexión", "No se pudo conectar a la base de datos.");
-            return 0; // 0 indica error
-        }
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+        if (cnx == null) return null;
 
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
             pst.setString(1, usuario);
@@ -128,18 +143,17 @@ public class LoginController {
                 if (rs.next()) {
                     String contraHasheada = rs.getString("contra");
                     if (BCrypt.checkpw(contraPlana, contraHasheada)) {
-                        // Si la contraseña es correcta, devolvemos el tipo de usuario
-                        return rs.getInt("idTipo");
+                        int idTipo = rs.getInt("idTipo");
+                        String nombre = rs.getString("nombreUsuario");
+                        return new UserSession(idTipo, nombre); // Devolvemos el objeto con los datos
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            mostrarAlerta("Error de Consulta", "Error al verificar las credenciales.");
         }
-        return 0; // Si algo falla, devuelve 0
+        return null; // Si algo falla, devuelve nulo
     }
-
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);

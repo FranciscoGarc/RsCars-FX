@@ -186,7 +186,10 @@ public class PrimerUsoController {
             Scene scene = new Scene(fxmlLoader.load());
 
             MainController mainController = fxmlLoader.getController();
-            mainController.inicializarConUsuario(1);
+            // Ahora pasamos tanto el tipo de usuario como el nombre
+            // Como es el primer usuario (administrador), usamos los datos guardados
+            String nombreCompleto = this.nombre + " " + this.apellido;
+            mainController.inicializarConUsuario(1, nombreCompleto); // 1 = Mecánico/Administrador
 
             Stage stage = new Stage();
             stage.setTitle("RsCars Taller - Panel Principal");
@@ -200,6 +203,7 @@ public class PrimerUsoController {
             mostrarAlerta("Error", "No se pudo abrir la ventana principal.");
         }
     }
+
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

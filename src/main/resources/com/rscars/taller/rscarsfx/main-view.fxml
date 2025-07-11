@@ -4,6 +4,15 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
 
 <BorderPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
             prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
@@ -13,6 +22,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="Archivo">
                     <items>
+                        <MenuItem fx:id="menuVerDashboard" onAction="#onVerDashboardClick" mnemonicParsing="false" text="Inicio" />
                         <MenuItem fx:id="menuCerrarSesion" onAction="#onCerrarSesionClick" mnemonicParsing="false" text="Cerrar Sesión" />
                     </items>
                 </Menu>
@@ -40,5 +50,28 @@
         </MenuBar>
     </top>
     <center>
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <children>
+                <Label fx:id="lblBienvenida" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50.0" />
+                        <ColumnConstraints percentWidth="50.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints />
+                    </rowConstraints>
+                    <children>
+                        <PieChart fx:id="graficoEstadoCitas" title="Estado de las Citas" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+
+                        <BarChart fx:id="graficoServicios" title="Servicios Más Populares" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <xAxis><CategoryAxis label="Servicios" /></xAxis>
+                            <yAxis><NumberAxis label="Cantidad de Citas" /></yAxis>
+                        </BarChart>
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
     </center>
 </BorderPane>

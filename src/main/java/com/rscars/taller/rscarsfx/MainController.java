@@ -3,15 +3,36 @@ package com.rscars.taller.rscarsfx;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import javafx.scene.control.Label;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.BarChart;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.Initializable;
+import javafx.scene.chart.XYChart;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalTime;
+import java.util.ResourceBundle;
 
-public class MainController {
+
+public class MainController implements Initializable {
+
+    @FXML private Label lblBienvenida;
+    @FXML private PieChart graficoEstadoCitas;
+    @FXML private BarChart<String, Number> graficoServicios; // Gráfico extra como ejemplo
+    private String nombreUsuarioLogueado;
+
 
     @FXML
     private BorderPane mainPanel;
@@ -37,26 +58,96 @@ public class MainController {
     @FXML
     private MenuItem menuGestionContadores;
 
+    @FXML
+    private MenuItem menuVerDashboard;
+
 
     // Aquí agregaremos los métodos para manejar los clics del menú
 
-    public void inicializarConUsuario(int idTipoUsuario) {
-        // Por defecto, un mecánico (idTipo 1) ve todo.
-        // Solo aplicamos restricciones si es un contador (idTipo 2).
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        cargarDatosGraficoCitas();
+        cargarDatosGraficoServicios(); // Carga el gráfico de ejemplo
+    }
+
+    /**
+     * Este método ahora recibe el nombre del usuario y lo guarda.
+     */
+    public void inicializarConUsuario(int idTipoUsuario, String nombreUsuario) {
+        // Guardamos el nombre para usarlo después
+        this.nombreUsuarioLogueado = nombreUsuario;
+
+        // AQUÍ es donde debemos configurar el mensaje de bienvenida
+        configurarMensajeBienvenida();
+
+        // La lógica de permisos no cambia
         if (idTipoUsuario == 2) { // Es Contador
-            System.out.println("Usuario es Contador. Aplicando restricciones.");
-            if (menuGestionMecanicos != null) {
-                menuGestionMecanicos.setVisible(false);
-            }
-            if (menuGestionContadores != null) {
-                menuGestionContadores.setVisible(false);
-            }
-            if (menuGestionEmpleados != null) {
-                menuGestionEmpleados.setVisible(false);
-            }
-        } else {
-            System.out.println("Usuario es Mecánico. Acceso completo.");
+            menuGestionMecanicos.setVisible(false);
+            menuGestionContadores.setVisible(false);
+            menuGestionEmpleados.setVisible(false);
         }
+    }
+
+
+    // --- MÉTODO ACTUALIZADO ---
+    private void configurarMensajeBienvenida() {
+        LocalTime ahora = LocalTime.now();
+        String saludo;
+        if (ahora.isBefore(LocalTime.of(12, 0))) {
+            saludo = "¡Buenos días";
+        } else if (ahora.isBefore(LocalTime.of(19, 0))) {
+            saludo = "¡Buenas tardes";
+        } else {
+            saludo = "¡Buenas noches";
+        }
+
+        // Usamos el nombre guardado para personalizar el mensaje
+        String nombreFinal = (nombreUsuarioLogueado != null && !nombreUsuarioLogueado.isBlank()) ? nombreUsuarioLogueado.trim() : "";
+        lblBienvenida.setText(saludo + ", " + nombreFinal + "!");
+    }
+
+    private void cargarDatosGraficoCitas() {
+        String sql = "SELECT estado, COUNT(*) as total FROM tbCitas GROUP BY estado";
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+
+        try (Statement stmt = cnx.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                String estado = rs.getString("estado").trim();
+                int total = rs.getInt("total");
+                pieChartData.add(new PieChart.Data(estado + " (" + total + ")", total));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        graficoEstadoCitas.setData(pieChartData);
+    }
+
+    private void cargarDatosGraficoServicios() {
+        String sql = "SELECT S.descripcion, COUNT(C.idCita) AS total " +
+                "FROM tbCitas C " +
+                "JOIN tbServicios S ON C.idServicio = S.idServicio " +
+                "GROUP BY S.descripcion " +
+                "ORDER BY total DESC";
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Citas por Servicio");
+        Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+
+        try (Statement stmt = cnx.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                String servicio = rs.getString("descripcion").trim();
+                int total = rs.getInt("total");
+                series.getData().add(new XYChart.Data<>(servicio, total));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        graficoServicios.getData().add(series);
     }
 
     @FXML
@@ -102,6 +193,13 @@ public class MainController {
     }
 
     @FXML
+    void onVerDashboardClick() {
+        System.out.println("Cargando dashboard principal...");
+        // Cargar la vista principal con los gráficos
+        cargarVistaDashboard();
+    }
+
+    @FXML
     void onCerrarSesionClick() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
@@ -131,5 +229,45 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void cargarVistaDashboard() {
+        // Recreamos la vista del dashboard con los gráficos
+        VBox dashboardView = new VBox(20);
+        dashboardView.setStyle("-fx-padding: 20;");
+
+        // Añadir mensaje de bienvenida
+        configurarMensajeBienvenida();
+        dashboardView.getChildren().add(lblBienvenida);
+
+        // Crear el GridPane para los gráficos
+        GridPane gridGraficos = new GridPane();
+        gridGraficos.setHgap(20);
+        gridGraficos.setVgap(20);
+
+        // Configurar columnas
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(50);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(50);
+        gridGraficos.getColumnConstraints().addAll(col1, col2);
+
+        // Añadir los gráficos al grid
+        // Limpiar datos anteriores
+        graficoEstadoCitas.setData(FXCollections.observableArrayList());
+        graficoServicios.getData().clear();
+
+        // Cargar nuevos datos
+        cargarDatosGraficoCitas();
+        cargarDatosGraficoServicios();
+
+        gridGraficos.add(graficoEstadoCitas, 0, 0);
+        gridGraficos.add(graficoServicios, 1, 0);
+
+        // Añadir el grid al dashboard
+        dashboardView.getChildren().add(gridGraficos);
+
+        // Mostrar en el panel principal
+        mainPanel.setCenter(dashboardView);
     }
 }
