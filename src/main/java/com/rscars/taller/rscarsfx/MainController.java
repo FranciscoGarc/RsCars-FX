@@ -200,6 +200,10 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    void onReporteCitasClick() {
+        ReporteService.generarReporteCitas();
+    }
+    @FXML
     void onCerrarSesionClick() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));

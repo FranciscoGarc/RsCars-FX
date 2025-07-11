@@ -46,6 +46,11 @@
                         <MenuItem fx:id="menuAgendarCita" onAction="#onAgendarCitaClick" mnemonicParsing="false" text="Agendar Nueva Cita" />
                     </items>
                 </Menu>
+                <Menu mnemonicParsing="false" text="Reportes">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Reporte de Citas" onAction="#onReporteCitasClick" />
+                    </items>
+                </Menu>
             </menus>
         </MenuBar>
     </top>
