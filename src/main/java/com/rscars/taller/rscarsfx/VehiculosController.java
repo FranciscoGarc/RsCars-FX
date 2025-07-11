@@ -61,6 +61,9 @@ public class VehiculosController implements Initializable {
         this.colPlaca.setCellValueFactory(new PropertyValueFactory<>("placa"));
         this.colIdCliente.setCellValueFactory(new PropertyValueFactory<>("idCliente"));
 
+        this.colId.setVisible(false); // Ocultar la columna de ID si no es necesaria en la vista
+        this.colIdCliente.setVisible(false);
+
         cargarVehiculos();
     }
 

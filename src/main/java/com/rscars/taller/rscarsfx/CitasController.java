@@ -83,6 +83,8 @@ public class CitasController implements Initializable {
         colVehiculo.setCellValueFactory(new PropertyValueFactory<>("vehiculo"));
         colServicio.setCellValueFactory(new PropertyValueFactory<>("servicio"));
 
+        colId.setVisible(false); // Ocultar la columna de ID de la cita
+
         cargarCitas();
     }
 

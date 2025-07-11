@@ -37,6 +37,9 @@ public class ProveedoresController implements Initializable {
         this.colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         this.colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         this.colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
+
+        this.colIdProveedor.setVisible(false); // Ocultar columna ID proveedor
+
         cargarProveedores();
     }
 
@@ -128,4 +131,3 @@ public class ProveedoresController implements Initializable {
         alert.showAndWait();
     }
 }
-

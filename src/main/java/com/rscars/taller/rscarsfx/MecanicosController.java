@@ -48,6 +48,10 @@ public class MecanicosController implements Initializable {
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
         colDui.setCellValueFactory(new PropertyValueFactory<>("dui"));
+
+        colIdMecanico.setVisible(false); // Ocultar columna ID mecánico
+        colIdUsuario.setVisible(false);  // Ocultar columna ID usuario
+
         cargarMecanicos();
     }
 
@@ -182,4 +186,3 @@ public class MecanicosController implements Initializable {
         alert.showAndWait();
     }
 }
-

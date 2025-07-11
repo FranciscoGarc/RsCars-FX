@@ -35,6 +35,9 @@ public class RepuestosController implements Initializable {
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
         colIdProveedor.setCellValueFactory(new PropertyValueFactory<>("idProveedor"));
+
+        this.colId.setVisible(false); // Ocultar la columna de ID si no es necesaria en la vista
+        this.colIdProveedor.setVisible(false);
         cargarRepuestos();
     }
 

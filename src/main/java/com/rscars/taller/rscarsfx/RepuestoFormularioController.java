@@ -31,14 +31,14 @@ public class RepuestoFormularioController implements Initializable {
 
     private void cargarProveedoresEnComboBox() {
         ObservableList<Proveedor> listaProveedores = FXCollections.observableArrayList();
-        String sql = "SELECT idProveedor, nombre, teléfono, correo FROM tbProveedores";
+        String sql = "SELECT idProveedor, nombre, telefono, correo FROM tbProveedores";
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (Statement stmt = cnx.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 listaProveedores.add(new Proveedor(
                         rs.getInt("idProveedor"),
                         rs.getString("nombre"),
-                        rs.getString("teléfono"),
+                        rs.getString("telefono"),
                         rs.getString("correo")
                 ));
             }
@@ -73,9 +73,9 @@ public class RepuestoFormularioController implements Initializable {
         int idProveedorSeleccionado = cbProveedor.getSelectionModel().getSelectedItem().getIdProveedor();
         String sql;
         if (esNuevo) {
-            sql = "INSERT INTO tbRepuestos (descripción, precio, stock, idProveedor) VALUES (?, ?, ?, ?)";
+            sql = "INSERT INTO tbRepuestos (descripcion, precio, stock, idProveedor) VALUES (?, ?, ?, ?)";
         } else {
-            sql = "UPDATE tbRepuestos SET descripción = ?, precio = ?, stock = ?, idProveedor = ? WHERE idRepuesto = ?";
+            sql = "UPDATE tbRepuestos SET descripcion = ?, precio = ?, stock = ?, idProveedor = ? WHERE idRepuesto = ?";
         }
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {

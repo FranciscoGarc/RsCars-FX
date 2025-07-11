@@ -56,6 +56,9 @@ public class ContadoresController implements Initializable {
         colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
         colDui.setCellValueFactory(new PropertyValueFactory<>("dui"));
 
+        colIdEmpleado.setVisible(false); // Ocultar columna ID empleado
+        colIdUsuario.setVisible(false);  // Ocultar columna ID usuario
+
         cargarContadores();
     }
 

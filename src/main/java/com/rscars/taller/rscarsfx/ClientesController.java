@@ -62,6 +62,8 @@ public class ClientesController implements Initializable {
         this.colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
         this.colDui.setCellValueFactory(new PropertyValueFactory<>("dui"));
 
+        this.colId.setVisible(false); // Ocultar la columna de ID si no es necesaria en la vista
+
         cargarClientes();
     }
 

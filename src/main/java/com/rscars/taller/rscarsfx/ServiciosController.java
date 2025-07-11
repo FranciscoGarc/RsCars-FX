@@ -37,6 +37,9 @@ public class ServiciosController implements Initializable {
         this.colId.setCellValueFactory(new PropertyValueFactory<>("idServicio"));
         this.colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         this.colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
+
+        this.colId.setVisible(false); // Ocultar columna ID servicio
+
         cargarServicios();
     }
 
@@ -128,4 +131,3 @@ public class ServiciosController implements Initializable {
         alert.showAndWait();
     }
 }
-
