@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 
 public class LoginController {
 
@@ -71,6 +73,22 @@ public class LoginController {
         }
     }
 
+    @FXML
+    private void handleForgotPassword() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("password-reset-view.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = new Stage();
+            stage.setTitle("Restablecer Contraseña");
+            // Modality.APPLICATION_MODAL bloquea la interacción con la ventana de login
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait(); // Muestra la ventana y espera a que se cierre
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo abrir la ventana de restablecimiento de contraseña.");
+        }
+    }
 
     private void abrirVentanaPrincipal(int idTipoUsuario) {
         try {
