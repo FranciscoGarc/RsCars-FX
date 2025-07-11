@@ -33,6 +33,9 @@ public class VehiculoFormularioController implements Initializable {
     // 3. Este método se ejecuta automáticamente al cargar la vista
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        ValidationUtil.limitLicensePlateLength(tfPlaca);
+        ValidationUtil.limitYearLength(tfAnio);
         cargarClientesEnComboBox();
     }
 
@@ -85,9 +88,25 @@ public class VehiculoFormularioController implements Initializable {
 
     @FXML
     void guardarVehiculo() {
-        // 6. Adaptamos la validación y la obtención de datos
-        if (tfMarca.getText().isEmpty() || cbCliente.getSelectionModel().getSelectedItem() == null) {
-            mostrarAlerta("Error de Validación", "La Marca y el Cliente son campos obligatorios.");
+        String marca = tfMarca.getText().trim();
+        String modelo = tfModelo.getText().trim();
+        String anio = tfAnio.getText().trim();
+        String placa = tfPlaca.getText().trim();
+
+        if (!ValidationUtil.isNotEmpty(marca) || !ValidationUtil.isNotEmpty(modelo) ||
+            !ValidationUtil.isNotEmpty(anio) || !ValidationUtil.isNotEmpty(placa) ||
+            cbCliente.getSelectionModel().getSelectedItem() == null) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
+            return;
+        }
+
+        if (!ValidationUtil.isNumbersOnly(anio) || anio.length() != 4) {
+            mostrarAlerta("Error de Validación", "El año debe ser un número de 4 dígitos.");
+            return;
+        }
+
+        if (!ValidationUtil.isValidLicensePlate(placa)) {
+            mostrarAlerta("Error de Validación", "La placa debe tener hasta 7 caracteres alfanuméricos.");
             return;
         }
 
@@ -104,10 +123,10 @@ public class VehiculoFormularioController implements Initializable {
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
 
-            pst.setString(1, tfMarca.getText().trim());
-            pst.setString(2, tfModelo.getText().trim());
-            pst.setInt(3, Integer.parseInt(tfAnio.getText().trim()));
-            pst.setString(4, tfPlaca.getText().trim());
+            pst.setString(1, marca);
+            pst.setString(2, modelo);
+            pst.setInt(3, Integer.parseInt(anio));
+            pst.setString(4, placa);
             pst.setInt(5, idClienteSeleccionado); // Usamos el ID del ComboBox
 
             if (!esNuevo) {

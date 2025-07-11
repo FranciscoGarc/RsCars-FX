@@ -17,8 +17,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.fxml.Initializable;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class PrimerUsoController {
+public class PrimerUsoController implements Initializable {
 
     // --- CAMPOS ORIGINALES ---
     @FXML private TextField tfNombre, tfApellido, tfTelefono, tfDireccion, tfDui, tfCorreo, tfUsuario;
@@ -35,15 +38,61 @@ public class PrimerUsoController {
     private String codigoEnviado;
     private String nombre, apellido, telefono, direccion, dui, correo, usuario, contra;
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ValidationUtil.autoFormatPhone(tfTelefono);
+        ValidationUtil.autoFormatDui(tfDui);
+    }
+
     /**
      * Se activa con el primer botón. Valida los campos, envía el correo y muestra el panel de verificación.
      */
     @FXML
     void iniciarVerificacion() {
-        correo = tfCorreo.getText().trim();
-        // Validaciones iniciales
-        if (tfNombre.getText().isEmpty() || tfUsuario.getText().isEmpty() || obtenerPassword().isEmpty() || correo.isEmpty()) {
-            mostrarAlerta("Error de Validación", "Nombre, Usuario, Contraseña y Correo son obligatorios.");
+        String nombre = tfNombre.getText().trim();
+        String apellido = tfApellido.getText().trim();
+        String telefono = tfTelefono.getText().trim();
+        String direccion = tfDireccion.getText().trim();
+        String dui = tfDui.getText().trim();
+        String correo = tfCorreo.getText().trim();
+        String usuario = tfUsuario.getText().trim();
+        String contra = obtenerPassword();
+
+        // --- VALIDACIONES ---
+        if (!ValidationUtil.isNotEmpty(nombre) || !ValidationUtil.isNotEmpty(apellido) ||
+            !ValidationUtil.isNotEmpty(telefono) || !ValidationUtil.isNotEmpty(direccion) ||
+            !ValidationUtil.isNotEmpty(dui) || !ValidationUtil.isNotEmpty(correo) ||
+            !ValidationUtil.isNotEmpty(usuario) || !ValidationUtil.isNotEmpty(contra)) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
+            return;
+        }
+
+        if (!ValidationUtil.isTextOnly(nombre)) {
+            mostrarAlerta("Error de Validación", "El nombre solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isTextOnly(apellido)) {
+            mostrarAlerta("Error de Validación", "El apellido solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isPhoneValid(telefono)) {
+            mostrarAlerta("Error de Validación", "El teléfono debe tener 8 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isDuiValid(dui)) {
+            mostrarAlerta("Error de Validación", "El DUI debe tener 9 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isValidEmail(correo)) {
+            mostrarAlerta("Error de Validación", "El formato del correo electrónico no es válido.");
+            return;
+        }
+        if (ValidationUtil.usuarioYaExiste(usuario)) {
+            mostrarAlerta("Error de Validación", "El nombre de usuario ya está en uso. Por favor, elija otro.");
+            return;
+        }
+        if (!ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña debe tener al menos 8 caracteres.");
             return;
         }
 

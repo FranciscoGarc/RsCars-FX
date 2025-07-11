@@ -1,21 +1,24 @@
 package com.rscars.taller.rscarsfx;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ResourceBundle;
 import javafx.scene.control.PasswordField;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class ClienteFormularioController {
+public class ClienteFormularioController implements Initializable {
 
     @FXML
     private Label lblTitulo;
@@ -27,6 +30,16 @@ public class ClienteFormularioController {
     private PasswordField pfContra;
     @FXML
     private TextField tfContraVisible;
+
+    private Cliente clienteParaEditar;
+    private ClientesController clientesController; // Referencia al controlador principal
+    private boolean esNuevo = true;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ValidationUtil.autoFormatPhone(tfTelefono);
+        ValidationUtil.autoFormatDui(tfDui);
+    }
 
     @FXML
     private void togglePasswordVisibility() {
@@ -44,10 +57,6 @@ public class ClienteFormularioController {
     private String obtenerPassword() {
         return pfContra.isVisible() ? pfContra.getText() : tfContraVisible.getText();
     }
-
-    private Cliente clienteParaEditar;
-    private ClientesController clientesController; // Referencia al controlador principal
-    private boolean esNuevo = true;
 
     public void setClientesController(ClientesController controller) {
         this.clientesController = controller;
@@ -107,25 +116,68 @@ public class ClienteFormularioController {
 
     @FXML
     void guardarCliente() {
-        // La validación para un nuevo cliente sigue siendo la misma
-        if (esNuevo && (tfNombre.getText().isEmpty() || tfDui.getText().isEmpty() || tfUsuario.getText().isEmpty() || obtenerPassword().isEmpty())) {
-            mostrarAlerta("Error de Validación", "Para un nuevo cliente, todos los campos son obligatorios.");
+        String nombre = tfNombre.getText().trim();
+        String apellido = tfApellido.getText().trim();
+        String telefono = tfTelefono.getText().trim();
+        String direccion = tfDireccion.getText().trim();
+        String dui = tfDui.getText().trim();
+        String correo = tfCorreo.getText().trim();
+        String usuario = tfUsuario.getText().trim();
+        String contra = obtenerPassword(); // No trimear para validar longitud exacta
+
+        // --- VALIDACIONES ---
+        if (!ValidationUtil.isNotEmpty(nombre) || !ValidationUtil.isNotEmpty(apellido) ||
+            !ValidationUtil.isNotEmpty(telefono) || !ValidationUtil.isNotEmpty(direccion) ||
+            !ValidationUtil.isNotEmpty(dui) || !ValidationUtil.isNotEmpty(correo) ||
+            !ValidationUtil.isNotEmpty(usuario)) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
             return;
         }
-        // Validación más simple para editar
-        if (!esNuevo && (tfNombre.getText().isEmpty() || tfDui.getText().isEmpty() || tfUsuario.getText().isEmpty())) {
-            mostrarAlerta("Error de Validación", "Nombre, DUI y Usuario son obligatorios.");
+
+        if (esNuevo && !ValidationUtil.isNotEmpty(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña es obligatoria para nuevos usuarios.");
             return;
         }
+
+        if (!ValidationUtil.isTextOnly(nombre)) {
+            mostrarAlerta("Error de Validación", "El nombre solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isTextOnly(apellido)) {
+            mostrarAlerta("Error de Validación", "El apellido solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isPhoneValid(telefono)) {
+            mostrarAlerta("Error de Validación", "El teléfono debe tener 8 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isDuiValid(dui)) {
+            mostrarAlerta("Error de Validación", "El DUI debe tener 9 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isValidEmail(correo)) {
+            mostrarAlerta("Error de Validación", "El formato del correo electrónico no es válido.");
+            return;
+        }
+        if (esNuevo && ValidationUtil.usuarioYaExiste(usuario)) {
+            mostrarAlerta("Error de Validación", "El nombre de usuario ya está en uso. Por favor, elija otro.");
+            return;
+        }
+        if (esNuevo && !ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+        if (!esNuevo && !contra.isEmpty() && !ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La nueva contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+
 
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try {
             cnx.setAutoCommit(false);
 
-            String usuario = tfUsuario.getText().trim();
-            String contra = obtenerPassword().trim();
             String contraHasheada = BCrypt.hashpw(contra, BCrypt.gensalt());
-            String correo = tfCorreo.getText().trim();
 
             if (esNuevo) {
                 String sqlUsuario = "INSERT INTO tbUsuarios (idTipo, usuario, contra, correo) VALUES (?, ?, ?, ?)";
@@ -150,11 +202,11 @@ public class ClienteFormularioController {
                 String sqlCliente = "INSERT INTO tbClientes (idUsuario, nombre, apellido, telefono, direccion, dui) VALUES (?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement pstCliente = cnx.prepareStatement(sqlCliente)) {
                     pstCliente.setInt(1, nuevoUsuarioId);
-                    pstCliente.setString(2, tfNombre.getText().trim());
-                    pstCliente.setString(3, tfApellido.getText().trim());
-                    pstCliente.setString(4, tfTelefono.getText().trim());
-                    pstCliente.setString(5, tfDireccion.getText().trim());
-                    pstCliente.setString(6, tfDui.getText().trim());
+                    pstCliente.setString(2, nombre);
+                    pstCliente.setString(3, apellido);
+                    pstCliente.setString(4, telefono);
+                    pstCliente.setString(5, direccion);
+                    pstCliente.setString(6, dui);
                     pstCliente.executeUpdate();
                 }
 
@@ -190,11 +242,11 @@ public class ClienteFormularioController {
 
                 String sqlCliente = "UPDATE tbClientes SET nombre = ?, apellido = ?, telefono = ?, direccion = ?, dui = ? WHERE idCliente = ?";
                 try (PreparedStatement pstCliente = cnx.prepareStatement(sqlCliente)) {
-                    pstCliente.setString(1, tfNombre.getText().trim());
-                    pstCliente.setString(2, tfApellido.getText().trim());
-                    pstCliente.setString(3, tfTelefono.getText().trim());
-                    pstCliente.setString(4, tfDireccion.getText().trim());
-                    pstCliente.setString(5, tfDui.getText().trim());
+                    pstCliente.setString(1, nombre);
+                    pstCliente.setString(2, apellido);
+                    pstCliente.setString(3, telefono);
+                    pstCliente.setString(4, direccion);
+                    pstCliente.setString(5, dui);
                     pstCliente.setInt(6, clienteParaEditar.getIdCliente());
                     pstCliente.executeUpdate();
                 }

@@ -23,7 +23,8 @@ public class ContadorFormularioController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // No se requiere lógica especial al inicializar
+        ValidationUtil.autoFormatPhone(tfTelefono);
+        ValidationUtil.autoFormatDui(tfDui);
     }
 
     public void setContadoresController(ContadoresController controller) {
@@ -100,19 +101,68 @@ public class ContadorFormularioController implements Initializable {
 
     @FXML
     void guardarContador() {
-        if (tfNombre.getText().isEmpty() || tfUsuario.getText().isEmpty() || obtenerPassword().isEmpty()) {
-            mostrarAlerta("Error de Validación", "Nombre, Usuario y Contraseña son campos obligatorios.");
+        String nombre = tfNombre.getText().trim();
+        String apellido = tfApellido.getText().trim();
+        String telefono = tfTelefono.getText().trim();
+        String direccion = tfDireccion.getText().trim();
+        String dui = tfDui.getText().trim();
+        String correo = tfCorreo.getText().trim();
+        String usuario = tfUsuario.getText().trim();
+        String contra = obtenerPassword();
+
+        // --- VALIDACIONES ---
+        if (!ValidationUtil.isNotEmpty(nombre) || !ValidationUtil.isNotEmpty(apellido) ||
+            !ValidationUtil.isNotEmpty(telefono) || !ValidationUtil.isNotEmpty(direccion) ||
+            !ValidationUtil.isNotEmpty(dui) || !ValidationUtil.isNotEmpty(correo) ||
+            !ValidationUtil.isNotEmpty(usuario)) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
             return;
         }
+
+        if (esNuevo && !ValidationUtil.isNotEmpty(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña es obligatoria para nuevos usuarios.");
+            return;
+        }
+
+        if (!ValidationUtil.isTextOnly(nombre)) {
+            mostrarAlerta("Error de Validación", "El nombre solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isTextOnly(apellido)) {
+            mostrarAlerta("Error de Validación", "El apellido solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isPhoneValid(telefono)) {
+            mostrarAlerta("Error de Validación", "El teléfono debe tener 8 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isDuiValid(dui)) {
+            mostrarAlerta("Error de Validación", "El DUI debe tener 9 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isValidEmail(correo)) {
+            mostrarAlerta("Error de Validación", "El formato del correo electrónico no es válido.");
+            return;
+        }
+        if (esNuevo && ValidationUtil.usuarioYaExiste(usuario)) {
+            mostrarAlerta("Error de Validación", "El nombre de usuario ya está en uso. Por favor, elija otro.");
+            return;
+        }
+        if (esNuevo && !ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+        if (!esNuevo && !contra.isEmpty() && !ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La nueva contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+
 
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try {
             cnx.setAutoCommit(false);
 
-            String usuario = tfUsuario.getText().trim();
-            String contra = obtenerPassword().trim();
             String contraHasheada = BCrypt.hashpw(contra, BCrypt.gensalt());
-            String correo = tfCorreo.getText().trim();
 
             if (esNuevo) {
                 String sqlUsuario = "INSERT INTO tbUsuarios (idTipo, usuario, contra, correo) VALUES (?, ?, ?, ?)";
@@ -137,11 +187,11 @@ public class ContadorFormularioController implements Initializable {
                 String sqlContador = "INSERT INTO tbContadores (idUsuario, nombre, apellido, telefono, direccion, dui) VALUES (?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement pstContador = cnx.prepareStatement(sqlContador)) {
                     pstContador.setInt(1, nuevoUsuarioId);
-                    pstContador.setString(2, tfNombre.getText().trim());
-                    pstContador.setString(3, tfApellido.getText().trim());
-                    pstContador.setString(4, tfTelefono.getText().trim());
-                    pstContador.setString(5, tfDireccion.getText().trim());
-                    pstContador.setString(6, tfDui.getText().trim());
+                    pstContador.setString(2, nombre);
+                    pstContador.setString(3, apellido);
+                    pstContador.setString(4, telefono);
+                    pstContador.setString(5, direccion);
+                    pstContador.setString(6, dui);
                     pstContador.executeUpdate();
                 }
 
@@ -176,11 +226,11 @@ public class ContadorFormularioController implements Initializable {
 
                 String sqlContador = "UPDATE tbContadores SET nombre = ?, apellido = ?, telefono = ?, direccion = ?, dui = ? WHERE idEmpleado = ?";
                 try (PreparedStatement pstContador = cnx.prepareStatement(sqlContador)) {
-                    pstContador.setString(1, tfNombre.getText().trim());
-                    pstContador.setString(2, tfApellido.getText().trim());
-                    pstContador.setString(3, tfTelefono.getText().trim());
-                    pstContador.setString(4, tfDireccion.getText().trim());
-                    pstContador.setString(5, tfDui.getText().trim());
+                    pstContador.setString(1, nombre);
+                    pstContador.setString(2, apellido);
+                    pstContador.setString(3, telefono);
+                    pstContador.setString(4, direccion);
+                    pstContador.setString(5, dui);
                     pstContador.setInt(6, contadorParaEditar.getIdEmpleado());
                     pstContador.executeUpdate();
                 }

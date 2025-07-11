@@ -25,6 +25,7 @@ public class ProveedorFormularioController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Nada especial al iniciar
+        ValidationUtil.autoFormatPhone(tfTelefono);
     }
 
     public void setProveedoresController(ProveedoresController controller) {
@@ -42,21 +43,36 @@ public class ProveedorFormularioController implements Initializable {
 
     @FXML
     void guardarProveedor() {
-        if (tfNombre.getText().isEmpty()) {
-            mostrarAlerta("Error de Validación", "El nombre es obligatorio.");
+        String nombre = tfNombre.getText().trim();
+        String telefono = tfTelefono.getText().trim();
+        String correo = tfCorreo.getText().trim();
+
+        if (!ValidationUtil.isNotEmpty(nombre) || !ValidationUtil.isNotEmpty(telefono) || !ValidationUtil.isNotEmpty(correo)) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
             return;
         }
+
+        if (!ValidationUtil.isPhoneValid(telefono)) {
+            mostrarAlerta("Error de Validación", "El teléfono debe tener 8 dígitos.");
+            return;
+        }
+
+        if (!ValidationUtil.isValidEmail(correo)) {
+            mostrarAlerta("Error de Validación", "El formato del correo electrónico no es válido.");
+            return;
+        }
+
         String sql;
         if (esNuevo) {
-            sql = "INSERT INTO tbProveedores (nombre, teléfono, correo) VALUES (?, ?, ?)";
+            sql = "INSERT INTO tbProveedores (nombre, telefono, correo) VALUES (?, ?, ?)";
         } else {
-            sql = "UPDATE tbProveedores SET nombre = ?, teléfono = ?, correo = ? WHERE idProveedor = ?";
+            sql = "UPDATE tbProveedores SET nombre = ?, telefono = ?, correo = ? WHERE idProveedor = ?";
         }
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
-            pst.setString(1, tfNombre.getText().trim());
-            pst.setString(2, tfTelefono.getText().trim());
-            pst.setString(3, tfCorreo.getText().trim());
+            pst.setString(1, nombre);
+            pst.setString(2, telefono);
+            pst.setString(3, correo);
             if (!esNuevo) {
                 pst.setInt(4, proveedorParaEditar.getIdProveedor());
             }

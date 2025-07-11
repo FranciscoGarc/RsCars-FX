@@ -26,7 +26,8 @@ public class MecanicoFormularioController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // No se requiere lógica especial al inicializar
+        ValidationUtil.autoFormatPhone(tfTelefono);
+        ValidationUtil.autoFormatDui(tfDui);
     }
 
     @FXML
@@ -104,19 +105,68 @@ public class MecanicoFormularioController implements Initializable {
 
     @FXML
     void guardarMecanico() {
-        if (tfNombre.getText().isEmpty() || tfDui.getText().isEmpty() || tfUsuario.getText().isEmpty() || obtenerPassword().isEmpty()) {
-            mostrarAlerta("Error de Validación", "Nombre, DUI, Usuario y Contraseña son campos obligatorios.");
+        String nombre = tfNombre.getText().trim();
+        String apellido = tfApellido.getText().trim();
+        String telefono = tfTelefono.getText().trim();
+        String direccion = tfDireccion.getText().trim();
+        String dui = tfDui.getText().trim();
+        String correo = tfCorreo.getText().trim();
+        String usuario = tfUsuario.getText().trim();
+        String contra = obtenerPassword();
+
+        // --- VALIDACIONES ---
+        if (!ValidationUtil.isNotEmpty(nombre) || !ValidationUtil.isNotEmpty(apellido) ||
+            !ValidationUtil.isNotEmpty(telefono) || !ValidationUtil.isNotEmpty(direccion) ||
+            !ValidationUtil.isNotEmpty(dui) || !ValidationUtil.isNotEmpty(correo) ||
+            !ValidationUtil.isNotEmpty(usuario)) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
             return;
         }
+
+        if (esNuevo && !ValidationUtil.isNotEmpty(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña es obligatoria para nuevos usuarios.");
+            return;
+        }
+
+        if (!ValidationUtil.isTextOnly(nombre)) {
+            mostrarAlerta("Error de Validación", "El nombre solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isTextOnly(apellido)) {
+            mostrarAlerta("Error de Validación", "El apellido solo debe contener letras y espacios.");
+            return;
+        }
+        if (!ValidationUtil.isPhoneValid(telefono)) {
+            mostrarAlerta("Error de Validación", "El teléfono debe tener 8 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isDuiValid(dui)) {
+            mostrarAlerta("Error de Validación", "El DUI debe tener 9 dígitos.");
+            return;
+        }
+        if (!ValidationUtil.isValidEmail(correo)) {
+            mostrarAlerta("Error de Validación", "El formato del correo electrónico no es válido.");
+            return;
+        }
+        if (esNuevo && ValidationUtil.usuarioYaExiste(usuario)) {
+            mostrarAlerta("Error de Validación", "El nombre de usuario ya está en uso. Por favor, elija otro.");
+            return;
+        }
+        if (esNuevo && !ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+        if (!esNuevo && !contra.isEmpty() && !ValidationUtil.isValidPassword(contra)) {
+            mostrarAlerta("Error de Validación", "La nueva contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+
 
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try {
             cnx.setAutoCommit(false);
 
-            String usuario = tfUsuario.getText().trim();
-            String contra = obtenerPassword().trim();
             String contraHasheada = BCrypt.hashpw(contra, BCrypt.gensalt());
-            String correo = tfCorreo.getText().trim();
 
             if (esNuevo) {
                 String sqlUsuario = "INSERT INTO tbUsuarios (idTipo, usuario, contra, correo) VALUES (?, ?, ?, ?)";
@@ -141,11 +191,11 @@ public class MecanicoFormularioController implements Initializable {
                 String sqlMecanico = "INSERT INTO tbMecanicos (idUsuario, nombre, apellido, telefono, direccion, dui) VALUES (?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement pstMecanico = cnx.prepareStatement(sqlMecanico)) {
                     pstMecanico.setInt(1, nuevoUsuarioId);
-                    pstMecanico.setString(2, tfNombre.getText().trim());
-                    pstMecanico.setString(3, tfApellido.getText().trim());
-                    pstMecanico.setString(4, tfTelefono.getText().trim());
-                    pstMecanico.setString(5, tfDireccion.getText().trim());
-                    pstMecanico.setString(6, tfDui.getText().trim());
+                    pstMecanico.setString(2, nombre);
+                    pstMecanico.setString(3, apellido);
+                    pstMecanico.setString(4, telefono);
+                    pstMecanico.setString(5, direccion);
+                    pstMecanico.setString(6, dui);
                     pstMecanico.executeUpdate();
                 }
 
@@ -180,11 +230,11 @@ public class MecanicoFormularioController implements Initializable {
 
                 String sqlMecanico = "UPDATE tbMecanicos SET nombre = ?, apellido = ?, telefono = ?, direccion = ?, dui = ? WHERE idMecanico = ?";
                 try (PreparedStatement pstMecanico = cnx.prepareStatement(sqlMecanico)) {
-                    pstMecanico.setString(1, tfNombre.getText().trim());
-                    pstMecanico.setString(2, tfApellido.getText().trim());
-                    pstMecanico.setString(3, tfTelefono.getText().trim());
-                    pstMecanico.setString(4, tfDireccion.getText().trim());
-                    pstMecanico.setString(5, tfDui.getText().trim());
+                    pstMecanico.setString(1, nombre);
+                    pstMecanico.setString(2, apellido);
+                    pstMecanico.setString(3, telefono);
+                    pstMecanico.setString(4, direccion);
+                    pstMecanico.setString(5, dui);
                     pstMecanico.setInt(6, mecanicoParaEditar.getIdMecanico());
                     pstMecanico.executeUpdate();
                 }

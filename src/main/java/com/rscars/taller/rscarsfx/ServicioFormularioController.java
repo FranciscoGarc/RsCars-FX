@@ -42,17 +42,21 @@ public class ServicioFormularioController implements Initializable {
 
     @FXML
     void guardarServicio() {
-        if (tfDescripcion.getText().isEmpty() || tfCosto.getText().isEmpty()) {
+        String descripcion = tfDescripcion.getText().trim();
+        String costoStr = tfCosto.getText().trim();
+
+        if (!ValidationUtil.isNotEmpty(descripcion) || !ValidationUtil.isNotEmpty(costoStr)) {
             mostrarAlerta("Error de Validación", "La descripción y el costo son obligatorios.");
             return;
         }
-        double costo;
-        try {
-            costo = Double.parseDouble(tfCosto.getText().trim());
-        } catch (NumberFormatException e) {
-            mostrarAlerta("Error de Validación", "El costo debe ser un número válido.");
+
+        if (!ValidationUtil.isDecimal(costoStr)) {
+            mostrarAlerta("Error de Validación", "El costo debe ser un número válido (por ejemplo, 50.00).");
             return;
         }
+
+        double costo = Double.parseDouble(costoStr);
+
         String sql;
         if (esNuevo) {
             sql = "INSERT INTO tbServicios (descripcion, costo) VALUES (?, ?)";
@@ -61,7 +65,7 @@ public class ServicioFormularioController implements Initializable {
         }
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
-            pst.setString(1, tfDescripcion.getText().trim());
+            pst.setString(1, descripcion);
             pst.setDouble(2, costo);
             if (!esNuevo) {
                 pst.setInt(3, servicioParaEditar.getIdServicio());

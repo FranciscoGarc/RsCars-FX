@@ -66,10 +66,26 @@ public class RepuestoFormularioController implements Initializable {
 
     @FXML
     void guardarRepuesto() {
-        if (tfDescripcion.getText().isEmpty() || cbProveedor.getSelectionModel().getSelectedItem() == null) {
-            mostrarAlerta("Error de Validación", "La Descripción y el Proveedor son campos obligatorios.");
+        String descripcion = tfDescripcion.getText().trim();
+        String precioStr = tfPrecio.getText().trim();
+        String stockStr = tfStock.getText().trim();
+
+        if (!ValidationUtil.isNotEmpty(descripcion) || !ValidationUtil.isNotEmpty(precioStr) ||
+            !ValidationUtil.isNotEmpty(stockStr) || cbProveedor.getSelectionModel().getSelectedItem() == null) {
+            mostrarAlerta("Error de Validación", "Todos los campos son obligatorios.");
             return;
         }
+
+        if (!ValidationUtil.isDecimal(precioStr)) {
+            mostrarAlerta("Error de Validación", "El precio debe ser un número válido (por ejemplo, 25.99).");
+            return;
+        }
+
+        if (!ValidationUtil.isNumbersOnly(stockStr)) {
+            mostrarAlerta("Error de Validación", "El stock debe ser un número entero.");
+            return;
+        }
+
         int idProveedorSeleccionado = cbProveedor.getSelectionModel().getSelectedItem().getIdProveedor();
         String sql;
         if (esNuevo) {
@@ -79,9 +95,9 @@ public class RepuestoFormularioController implements Initializable {
         }
         Connection cnx = ConexionDB.obtenerInstancia().getCnx();
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
-            pst.setString(1, tfDescripcion.getText().trim());
-            pst.setInt(2, Integer.parseInt(tfPrecio.getText().trim()));
-            pst.setInt(3, Integer.parseInt(tfStock.getText().trim()));
+            pst.setString(1, descripcion);
+            pst.setDouble(2, Double.parseDouble(precioStr));
+            pst.setInt(3, Integer.parseInt(stockStr));
             pst.setInt(4, idProveedorSeleccionado);
             if (!esNuevo) {
                 pst.setInt(5, repuestoParaEditar.getIdRepuesto());
