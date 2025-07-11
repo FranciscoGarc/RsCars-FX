@@ -274,4 +274,15 @@ public class MainController implements Initializable {
         // Mostrar en el panel principal
         mainPanel.setCenter(dashboardView);
     }
+
+    // --- NUEVOS HANDLERS PARA REPORTES ---
+    @FXML
+    void onReporteClientesClick() {
+        ReporteService.generarReporteClientes();
+    }
+
+    @FXML
+    void onReporteVehiculosClick() {
+        ReporteService.generarReporteVehiculos();
+    }
 }

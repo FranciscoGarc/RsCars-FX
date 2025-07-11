@@ -49,6 +49,8 @@
                 <Menu mnemonicParsing="false" text="Reportes">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Reporte de Citas" onAction="#onReporteCitasClick" />
+                        <MenuItem mnemonicParsing="false" text="Reporte de Clientes" onAction="#onReporteClientesClick" />
+                        <MenuItem mnemonicParsing="false" text="Reporte de Vehículos" onAction="#onReporteVehiculosClick" />
                     </items>
                 </Menu>
             </menus>

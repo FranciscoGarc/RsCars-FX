@@ -88,4 +88,111 @@ public class ReporteService {
             // Aquí podrías mostrar una alerta de error al usuario
         }
     }
+
+    // --- NUEVO MÉTODO: REPORTE DE CLIENTES ---
+    public static void generarReporteClientes() {
+        try {
+            File file = File.createTempFile("ReporteClientes_", ".pdf");
+            PdfWriter writer = new PdfWriter(file);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            Paragraph titulo = new Paragraph("Reporte de Clientes - RsCars")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBold()
+                    .setFontSize(20);
+            document.add(titulo);
+
+            document.add(new Paragraph("Fecha de generación: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).setTextAlignment(TextAlignment.CENTER).setFontSize(9).setItalic());
+
+            Table table = new Table(UnitValue.createPercentArray(new float[]{1, 2, 2, 2, 2, 2}));
+            table.setWidth(UnitValue.createPercentValue(100));
+            table.setMarginTop(20);
+
+            table.addHeaderCell(new Cell().add(new Paragraph("ID").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Nombre").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Apellido").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Teléfono").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Dirección").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("DUI").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+
+            String sql = "SELECT idCliente, nombre, apellido, telefono, direccion, dui FROM tbClientes ORDER BY nombre, apellido";
+            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+            try (Statement stmt = cnx.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+                while (rs.next()) {
+                    table.addCell(String.valueOf(rs.getInt("idCliente")));
+                    table.addCell(rs.getString("nombre").trim());
+                    table.addCell(rs.getString("apellido").trim());
+                    table.addCell(rs.getString("telefono").trim());
+                    table.addCell(rs.getString("direccion").trim());
+                    table.addCell(rs.getString("dui").trim());
+                }
+            }
+
+            document.add(table);
+            document.close();
+
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // --- NUEVO MÉTODO: REPORTE DE VEHÍCULOS (CON CLIENTE) ---
+    public static void generarReporteVehiculos() {
+        try {
+            File file = File.createTempFile("ReporteVehiculos_", ".pdf");
+            PdfWriter writer = new PdfWriter(file);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            Paragraph titulo = new Paragraph("Reporte de Vehículos - RsCars")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBold()
+                    .setFontSize(20);
+            document.add(titulo);
+
+            document.add(new Paragraph("Fecha de generación: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).setTextAlignment(TextAlignment.CENTER).setFontSize(9).setItalic());
+
+            Table table = new Table(UnitValue.createPercentArray(new float[]{1, 2, 2, 1, 2, 2, 2}));
+            table.setWidth(UnitValue.createPercentValue(100));
+            table.setMarginTop(20);
+
+            table.addHeaderCell(new Cell().add(new Paragraph("ID").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Marca").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Modelo").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Año").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Placa").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Cliente").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            table.addHeaderCell(new Cell().add(new Paragraph("Teléfono").setBold()).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+
+            String sql = "SELECT v.idVehiculo, v.marca, v.modelo, v.año, v.placa, c.nombre, c.apellido, c.telefono " +
+                    "FROM tbVehiculos v " +
+                    "LEFT JOIN tbClientes c ON v.idCliente = c.idCliente " +
+                    "ORDER BY v.marca, v.modelo";
+            Connection cnx = ConexionDB.obtenerInstancia().getCnx();
+            try (Statement stmt = cnx.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+                while (rs.next()) {
+                    table.addCell(String.valueOf(rs.getInt("idVehiculo")));
+                    table.addCell(rs.getString("marca").trim());
+                    table.addCell(rs.getString("modelo").trim());
+                    table.addCell(String.valueOf(rs.getInt("año")));
+                    table.addCell(rs.getString("placa").trim());
+                    table.addCell(rs.getString("nombre").trim() + " " + rs.getString("apellido").trim());
+                    table.addCell(rs.getString("telefono").trim());
+                }
+            }
+
+            document.add(table);
+            document.close();
+
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
