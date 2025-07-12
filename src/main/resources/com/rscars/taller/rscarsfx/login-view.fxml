@@ -6,50 +6,32 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Hyperlink?>
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="500.0" prefWidth="400.0" spacing="25.0" styleClass="login-container" stylesheets="@styles.css" 
-      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.rscars.taller.rscarsfx.LoginController">
+      prefHeight="400.0" prefWidth="350.0" spacing="20.0" xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.LoginController">
     <children>
-        <!-- App Icon and Title -->
-        <VBox alignment="CENTER" spacing="10">
-            <children>
-                <Label text="🚗" style="-fx-font-size: 64px;"/>
-                <Label text="RsCars Taller" styleClass="title">
-                    <font>
-                        <Font name="System Bold" size="28.0"/>
-                    </font>
-                </Label>
-                <Label text="Sistema de Gestión Automotriz" styleClass="subtitle"/>
-            </children>
-        </VBox>
-        
-        <!-- Login Form -->
-        <VBox alignment="CENTER" spacing="15" maxWidth="280">
-            <children>
-                <Label text="Inicio de Sesión" styleClass="section-header"/>
-                
-                <TextField fx:id="tfUsuario" maxWidth="250.0" promptText="Usuario" styleClass="text-field"/>
+        <Label text="Inicio de Sesión">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Label>
+        <TextField fx:id="tfUsuario" maxWidth="200.0" promptText="Usuario"/>
 
-                <HBox alignment="CENTER" maxWidth="250.0" spacing="5.0">
-                    <children>
-                        <PasswordField fx:id="pfContra" promptText="Contraseña" HBox.hgrow="ALWAYS" styleClass="password-field"/>
-                        <TextField fx:id="tfContraVisible" managed="false" promptText="Contraseña" visible="false" HBox.hgrow="ALWAYS" styleClass="text-field"/>
-                        <Button onAction="#togglePasswordVisibility" text="👁" styleClass="button-secondary" style="-fx-min-width: 35px; -fx-padding: 8px;"/>
-                    </children>
-                </HBox>
-                
-                <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar" styleClass="button-primary" prefWidth="200"/>
-                
-                <Hyperlink text="Olvidé mi contraseña" onAction="#handleForgotPassword" styleClass="hyperlink"/>
+        <HBox alignment="CENTER" maxWidth="200.0" spacing="5.0">
+            <children>
+                <PasswordField fx:id="pfContra" promptText="Contraseña" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="tfContraVisible" managed="false" promptText="Contraseña" visible="false" HBox.hgrow="ALWAYS" />
+                <Button onAction="#togglePasswordVisibility" text="👁" />
             </children>
-        </VBox>
+        </HBox>
+        <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar"/>
+        <Hyperlink text="Olvidé mi contraseña" onAction="#handleForgotPassword" />
     </children>
     <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 </VBox>

@@ -5,7 +5,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.chart.BarChart?>
@@ -14,10 +13,9 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-            prefWidth="1000.0" styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+            prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.rscars.taller.rscarsfx.MainController">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
@@ -59,33 +57,10 @@
         </MenuBar>
     </top>
     <center>
-        <VBox spacing="20" styleClass="container">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
+        <VBox spacing="20" style="-fx-padding: 20;">
             <children>
-                <!-- Header with App Icon Area and Welcome Message -->
-                <HBox spacing="20" alignment="CENTER_LEFT">
-                    <children>
-                        <!-- Application Icon Area -->
-                        <VBox styleClass="icon-area" alignment="CENTER" spacing="5">
-                            <children>
-                                <Label text="🚗" style="-fx-font-size: 48px;"/>
-                                <Label text="RsCars" styleClass="label-highlight" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
-                            </children>
-                        </VBox>
-                        
-                        <!-- Welcome Message -->
-                        <VBox alignment="CENTER_LEFT" spacing="5">
-                            <children>
-                                <Label fx:id="lblBienvenida" styleClass="welcome-message" />
-                                <Label text="Sistema de Gestión de Taller Automotriz" styleClass="subtitle"/>
-                            </children>
-                        </VBox>
-                    </children>
-                </HBox>
+                <Label fx:id="lblBienvenida" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
 
-                <!-- Dashboard Charts -->
                 <GridPane hgap="20" vgap="20">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="50.0" />
@@ -95,22 +70,12 @@
                         <RowConstraints />
                     </rowConstraints>
                     <children>
-                        <VBox styleClass="dashboard-card" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <children>
-                                <Label text="Estado de las Citas" styleClass="section-header"/>
-                                <PieChart fx:id="graficoEstadoCitas" />
-                            </children>
-                        </VBox>
+                        <PieChart fx:id="graficoEstadoCitas" title="Estado de las Citas" GridPane.columnIndex="0" GridPane.rowIndex="0" />
 
-                        <VBox styleClass="dashboard-card" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <children>
-                                <Label text="Servicios Más Populares" styleClass="section-header"/>
-                                <BarChart fx:id="graficoServicios">
-                                    <xAxis><CategoryAxis label="Servicios" /></xAxis>
-                                    <yAxis><NumberAxis label="Cantidad de Citas" /></yAxis>
-                                </BarChart>
-                            </children>
-                        </VBox>
+                        <BarChart fx:id="graficoServicios" title="Servicios Más Populares" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <xAxis><CategoryAxis label="Servicios" /></xAxis>
+                            <yAxis><NumberAxis label="Cantidad de Citas" /></yAxis>
+                        </BarChart>
                     </children>
                 </GridPane>
             </children>

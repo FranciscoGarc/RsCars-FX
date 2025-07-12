@@ -7,52 +7,35 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.ServiciosController">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.ServiciosController">
     <top>
-        <VBox alignment="CENTER" spacing="10" styleClass="container">
-            <children>
-                <Label text="Gestión de Servicios" styleClass="title">
-                    <font>
-                        <Font name="System Bold" size="28.0" />
-                    </font>
-                </Label>
-                <Label text="Administra los servicios ofrecidos por el taller" styleClass="subtitle"/>
-            </children>
+        <Label text="Gestión de Servicios" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
             <BorderPane.margin>
-                <Insets bottom="15.0" top="15.0" left="15.0" right="15.0"/>
+                <Insets bottom="10.0" top="10.0" />
             </BorderPane.margin>
-        </VBox>
+        </Label>
     </top>
     <center>
-        <VBox spacing="15" styleClass="container">
-            <children>
-                <Label text="Lista de Servicios" styleClass="section-header"/>
-                <TableView fx:id="tablaServicios" BorderPane.alignment="CENTER" styleClass="table-view">
-                    <columns>
-                        <TableColumn fx:id="colId" prefWidth="100.0" text="ID" />
-                        <TableColumn fx:id="colDescripcion" prefWidth="350.0" text="Descripción" />
-                        <TableColumn fx:id="colCosto" prefWidth="150.0" text="Costo" />
-                    </columns>
-                </TableView>
-            </children>
-            <VBox.margin>
-                <Insets bottom="15.0" top="0.0" left="15.0" right="15.0"/>
-            </VBox.margin>
-        </VBox>
+        <TableView fx:id="tablaServicios" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                <TableColumn fx:id="colDescripcion" prefWidth="220.0" text="Descripción" />
+                <TableColumn fx:id="colCosto" prefWidth="120.0" text="Costo" />
+            </columns>
+        </TableView>
     </center>
     <bottom>
-        <HBox alignment="CENTER" prefHeight="80.0" spacing="20.0" styleClass="container" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER" prefHeight="60.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="btnNuevo" onAction="#handleNuevoServicio" mnemonicParsing="false" text="🔧 Nuevo Servicio" styleClass="button-primary"/>
-                <Button fx:id="btnEditar" onAction="#handleEditarServicio" mnemonicParsing="false" text="✏️ Editar Servicio" styleClass="button-secondary"/>
-                <Button fx:id="btnEliminar" onAction="#handleEliminarServicio" mnemonicParsing="false" text="🗑️ Eliminar Servicio" styleClass="button-danger"/>
+                <Button fx:id="btnNuevo" onAction="#handleNuevoServicio" mnemonicParsing="false" text="Nuevo Servicio" />
+                <Button fx:id="btnEditar" onAction="#handleEditarServicio" mnemonicParsing="false" text="Editar Servicio" />
+                <Button fx:id="btnEliminar" onAction="#handleEliminarServicio" mnemonicParsing="false" text="Eliminar Servicio" />
             </children>
-            <BorderPane.margin>
-                <Insets bottom="15.0" top="0.0" left="15.0" right="15.0"/>
-            </BorderPane.margin>
         </HBox>
     </bottom>
 </BorderPane>

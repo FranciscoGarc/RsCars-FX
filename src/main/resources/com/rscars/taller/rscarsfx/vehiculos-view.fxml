@@ -7,55 +7,38 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.VehiculosController">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.VehiculosController">
     <top>
-        <VBox alignment="CENTER" spacing="10" styleClass="container">
-            <children>
-                <Label text="Gestión de Vehículos" styleClass="title">
-                    <font>
-                        <Font name="System Bold" size="28.0" />
-                    </font>
-                </Label>
-                <Label text="Administra el registro de vehículos del taller" styleClass="subtitle"/>
-            </children>
+        <Label text="Gestión de Vehículos" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
             <BorderPane.margin>
-                <Insets bottom="15.0" top="15.0" left="15.0" right="15.0"/>
+                <Insets bottom="10.0" top="10.0" />
             </BorderPane.margin>
-        </VBox>
+        </Label>
     </top>
     <center>
-        <VBox spacing="15" styleClass="container">
-            <children>
-                <Label text="Lista de Vehículos" styleClass="section-header"/>
-                <TableView fx:id="tablaVehiculos" BorderPane.alignment="CENTER" styleClass="table-view">
-                    <columns>
-                        <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
-                        <TableColumn fx:id="colMarca" prefWidth="150.0" text="Marca" />
-                        <TableColumn fx:id="colModelo" prefWidth="150.0" text="Modelo" />
-                        <TableColumn fx:id="colAnio" prefWidth="100.0" text="Año" />
-                        <TableColumn fx:id="colPlaca" prefWidth="140.0" text="Placa" />
-                        <TableColumn fx:id="colIdCliente" prefWidth="120.0" text="ID Cliente" />
-                    </columns>
-                </TableView>
-            </children>
-            <VBox.margin>
-                <Insets bottom="15.0" top="0.0" left="15.0" right="15.0"/>
-            </VBox.margin>
-        </VBox>
+        <TableView fx:id="tablaVehiculos" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                <TableColumn fx:id="colMarca" prefWidth="120.0" text="Marca" />
+                <TableColumn fx:id="colModelo" prefWidth="120.0" text="Modelo" />
+                <TableColumn fx:id="colAnio" prefWidth="80.0" text="Año" />
+                <TableColumn fx:id="colPlaca" prefWidth="120.0" text="Placa" />
+                <TableColumn fx:id="colIdCliente" prefWidth="100.0" text="ID Cliente" />
+            </columns>
+        </TableView>
     </center>
     <bottom>
-        <HBox alignment="CENTER" prefHeight="80.0" spacing="20.0" styleClass="container" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER" prefHeight="60.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="btnNuevo" onAction="#handleNuevoVehiculo" mnemonicParsing="false" text="🚗 Nuevo Vehículo" styleClass="button-primary"/>
-                <Button fx:id="btnEditar" onAction="#handleEditarVehiculo" mnemonicParsing="false" text="✏️ Editar Vehículo" styleClass="button-secondary"/>
-                <Button fx:id="btnEliminar" onAction="#handleEliminarVehiculo" mnemonicParsing="false" text="🗑️ Eliminar Vehículo" styleClass="button-danger"/>
+                <Button fx:id="btnNuevo" onAction="#handleNuevoVehiculo" mnemonicParsing="false" text="Nuevo Vehículo" />
+                <Button fx:id="btnEditar" onAction="#handleEditarVehiculo" mnemonicParsing="false" text="Editar Vehículo" />
+                <Button fx:id="btnEliminar" onAction="#handleEliminarVehiculo" mnemonicParsing="false" text="Eliminar Vehículo" />
             </children>
-            <BorderPane.margin>
-                <Insets bottom="15.0" top="0.0" left="15.0" right="15.0"/>
-            </BorderPane.margin>
         </HBox>
     </bottom>
 </BorderPane>
