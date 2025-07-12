@@ -12,87 +12,63 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="550.0" spacing="25.0" styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.PrimerUsoController">
+<VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="400.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.PrimerUsoController">
     <children>
-        <VBox alignment="CENTER" spacing="15" styleClass="container">
+        <Label fx:id="lblTitulo" text="Primer Uso">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        <GridPane hgap="10.0" vgap="10.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
             <children>
-                <!-- App Icon and Title -->
-                <Label text="🚗" style="-fx-font-size: 64px;"/>
-                <Label fx:id="lblTitulo" text="Configuración Inicial" styleClass="title">
-                    <font>
-                        <Font name="System Bold" size="28.0" />
-                    </font>
-                </Label>
-                <Label text="Configura tu cuenta de administrador" styleClass="subtitle"/>
-                <Label text="Esta será la cuenta principal del sistema" styleClass="label-secondary"/>
+                <Label text="Usuario:" GridPane.rowIndex="0"/>
+                <Label text="Contraseña:" GridPane.rowIndex="1"/>
+                <Label text="Correo:" GridPane.rowIndex="2"/>
+                <Label text="Nombre:" GridPane.rowIndex="3"/>
+                <Label text="Apellido:" GridPane.rowIndex="4"/>
+                <Label text="Teléfono:" GridPane.rowIndex="5"/>
+                <Label text="Dirección:" GridPane.rowIndex="6"/>
+                <Label text="DUI:" GridPane.rowIndex="7"/>
+                <TextField fx:id="tfUsuario" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <PasswordField fx:id="pfContra" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TextField fx:id="tfContraVisible" GridPane.columnIndex="1" GridPane.rowIndex="1" visible="false"/>
+                <Button text="👁" onAction="#togglePasswordVisibility" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <TextField fx:id="tfCorreo" promptText="correo@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <TextField fx:id="tfNombre" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <TextField fx:id="tfApellido" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <TextField fx:id="tfTelefono" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                <TextField fx:id="tfDireccion" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                <TextField fx:id="tfDui" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
             </children>
-        </VBox>
-        
-        <VBox spacing="20" styleClass="container">
+        </GridPane>
+        <HBox alignment="CENTER" spacing="20.0">
             <children>
-                <Label text="Información del Administrador" styleClass="section-header"/>
-                
-                <GridPane hgap="15.0" vgap="15.0">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-                        <ColumnConstraints minWidth="40.0" prefWidth="40.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label text="Usuario:" styleClass="label" GridPane.rowIndex="0"/>
-                        <Label text="Contraseña:" styleClass="label" GridPane.rowIndex="1"/>
-                        <Label text="Correo:" styleClass="label" GridPane.rowIndex="2"/>
-                        <Label text="Nombre:" styleClass="label" GridPane.rowIndex="3"/>
-                        <Label text="Apellido:" styleClass="label" GridPane.rowIndex="4"/>
-                        <Label text="Teléfono:" styleClass="label" GridPane.rowIndex="5"/>
-                        <Label text="Dirección:" styleClass="label" GridPane.rowIndex="6"/>
-                        <Label text="DUI:" styleClass="label" GridPane.rowIndex="7"/>
-                        
-                        <TextField fx:id="tfUsuario" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                        <PasswordField fx:id="pfContra" styleClass="password-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <TextField fx:id="tfContraVisible" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" visible="false"/>
-                        <Button text="👁" styleClass="button-secondary" onAction="#togglePasswordVisibility" GridPane.columnIndex="2" GridPane.rowIndex="1" style="-fx-min-width: 35px; -fx-padding: 8px;"/>
-                        <TextField fx:id="tfCorreo" promptText="correo@ejemplo.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <TextField fx:id="tfNombre" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                        <TextField fx:id="tfApellido" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                        <TextField fx:id="tfTelefono" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-                        <TextField fx:id="tfDireccion" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-                        <TextField fx:id="tfDui" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
-                    </children>
-                </GridPane>
+                <Button fx:id="btnGuardar" text="Enviar Código de Verificación" onAction="#iniciarVerificacion" />
             </children>
-        </VBox>
-        
-        <VBox spacing="15" styleClass="container">
-            <children>
-                <HBox alignment="CENTER" spacing="20.0">
-                    <children>
-                        <Button fx:id="btnGuardar" text="📧 Enviar Código de Verificación" styleClass="button-primary" onAction="#iniciarVerificacion" />
-                    </children>
-                </HBox>
-                
-                <VBox fx:id="panelVerificacion" alignment="CENTER" spacing="15" visible="false" managed="false" styleClass="container">
-                    <children>
-                        <Label text="Verificación de Correo" styleClass="section-header"/>
-                        <Label text="Se ha enviado un código a tu correo electrónico" styleClass="label"/>
-                        <TextField fx:id="tfCodigo" promptText="Ingresa el código de 6 dígitos" styleClass="text-field" maxWidth="200"/>
-                        <Button fx:id="btnVerificar" text="✅ Verificar y Crear Cuenta" styleClass="button-primary" onAction="#verificarYGuardar"/>
-                    </children>
-                </VBox>
-            </children>
-        </VBox>
+            <VBox fx:id="panelVerificacion" alignment="CENTER" spacing="10" visible="false" managed="false">
+                <children>
+                    <Label text="Se ha enviado un código a tu correo."/>
+                    <TextField fx:id="tfCodigo" promptText="Ingresa el código de 6 dígitos"/>
+                    <Button fx:id="btnVerificar" text="Verificar y Crear Cuenta" onAction="#verificarYGuardar"/>
+                </children>
+            </VBox>
+        </HBox>
     </children>
     <padding>
-        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 </VBox>

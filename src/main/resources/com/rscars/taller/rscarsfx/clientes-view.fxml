@@ -7,55 +7,38 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.ClientesController">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.ClientesController">
     <top>
-        <VBox alignment="CENTER" spacing="10" styleClass="container">
-            <children>
-                <Label text="Gestión de Clientes" styleClass="title">
-                    <font>
-                        <Font name="System Bold" size="28.0" />
-                    </font>
-                </Label>
-                <Label text="Administra la información de todos los clientes del taller" styleClass="subtitle"/>
-            </children>
+        <Label text="Gestión de Clientes" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
             <BorderPane.margin>
-                <Insets bottom="15.0" top="15.0" left="15.0" right="15.0"/>
+                <Insets bottom="10.0" top="10.0" />
             </BorderPane.margin>
-        </VBox>
+        </Label>
     </top>
     <center>
-        <VBox spacing="15" styleClass="container">
-            <children>
-                <Label text="Lista de Clientes" styleClass="section-header"/>
-                <TableView fx:id="tablaClientes" BorderPane.alignment="CENTER" styleClass="table-view">
-                    <columns>
-                        <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
-                        <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />
-                        <TableColumn fx:id="colApellido" prefWidth="150.0" text="Apellido" />
-                        <TableColumn fx:id="colTelefono" prefWidth="120.0" text="Teléfono" />
-                        <TableColumn fx:id="colDireccion" prefWidth="250.0" text="Dirección" />
-                        <TableColumn fx:id="colDui" prefWidth="120.0" text="DUI" />
-                    </columns>
-                </TableView>
-            </children>
-            <VBox.margin>
-                <Insets bottom="15.0" top="0.0" left="15.0" right="15.0"/>
-            </VBox.margin>
-        </VBox>
+        <TableView fx:id="tablaClientes" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                <TableColumn fx:id="colNombre" prefWidth="120.0" text="Nombre" />
+                <TableColumn fx:id="colApellido" prefWidth="120.0" text="Apellido" />
+                <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
+                <TableColumn fx:id="colDireccion" prefWidth="200.0" text="Dirección" />
+                <TableColumn fx:id="colDui" prefWidth="100.0" text="DUI" />
+            </columns>
+        </TableView>
     </center>
     <bottom>
-        <HBox alignment="CENTER" prefHeight="80.0" spacing="20.0" styleClass="container" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER" prefHeight="60.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="btnNuevo" onAction="#handleNuevoCliente" mnemonicParsing="false" text="➕ Nuevo Cliente" styleClass="button-primary"/>
-                <Button fx:id="btnEditar" onAction="#handleEditarCliente" mnemonicParsing="false" text="✏️ Editar Cliente" styleClass="button-secondary"/>
-                <Button fx:id="btnEliminar" onAction="#handleEliminarCliente" mnemonicParsing="false" text="🗑️ Eliminar Cliente" styleClass="button-danger"/>
+                <Button fx:id="btnNuevo" onAction="#handleNuevoCliente" mnemonicParsing="false" text="Nuevo Cliente" />
+                <Button fx:id="btnEditar" onAction="#handleEditarCliente" mnemonicParsing="false" text="Editar Cliente" />
+                <Button fx:id="btnEliminar" onAction="#handleEliminarCliente" mnemonicParsing="false" text="Eliminar Cliente" />
             </children>
-            <BorderPane.margin>
-                <Insets bottom="15.0" top="0.0" left="15.0" right="15.0"/>
-            </BorderPane.margin>
         </HBox>
     </bottom>
 </BorderPane>
