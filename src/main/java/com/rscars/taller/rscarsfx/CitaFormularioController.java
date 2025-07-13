@@ -31,11 +31,10 @@ public class CitaFormularioController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cargarClientes();
         cargarServicios();
-        // Poblar el ComboBox de estados
         ObservableList<String> estados = FXCollections.observableArrayList("Pendiente", "En Proceso", "Completada", "Cancelada");
         cbEstado.setItems(estados);
-        // Seleccionar un valor por defecto
         cbEstado.setValue("Pendiente");
+        ValidationUtil.autoFormatHour(tfHora);
     }
 
     public void setCitasController(CitasController controller) {

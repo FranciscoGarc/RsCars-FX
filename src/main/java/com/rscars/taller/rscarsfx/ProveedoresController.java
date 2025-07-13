@@ -117,6 +117,7 @@ public class ProveedoresController implements Initializable {
             stage.setTitle(proveedor == null ? "Nuevo Proveedor" : "Editar Proveedor");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();

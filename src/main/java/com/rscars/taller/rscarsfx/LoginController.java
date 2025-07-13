@@ -95,6 +95,7 @@ public class LoginController {
             // Modality.APPLICATION_MODAL bloquea la interacción con la ventana de login
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,6 +116,7 @@ public class LoginController {
             Stage stage = new Stage();
             stage.setTitle("RsCars Taller - Panel Principal");
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.show();
 
             Stage loginStage = (Stage) btnIngresar.getScene().getWindow();

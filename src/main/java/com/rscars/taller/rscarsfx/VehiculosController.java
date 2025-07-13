@@ -154,6 +154,7 @@ public class VehiculosController implements Initializable {
             stage.setTitle(vehiculo == null ? "Nuevo Vehículo" : "Editar Vehículo");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait();
 
         } catch (IOException e) {

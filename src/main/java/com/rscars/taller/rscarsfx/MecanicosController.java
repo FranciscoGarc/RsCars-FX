@@ -172,6 +172,7 @@ public class MecanicosController implements Initializable {
             stage.setTitle(mecanico == null ? "Nuevo Mecánico" : "Editar Mecánico");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();

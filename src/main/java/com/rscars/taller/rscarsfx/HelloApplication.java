@@ -27,6 +27,7 @@ public class HelloApplication extends Application {
 
         Scene scene = new Scene(fxmlLoader.load(), 400, 450); // Ajusta el tamaño si es necesario
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
     @Override

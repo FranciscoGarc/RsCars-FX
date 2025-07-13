@@ -64,6 +64,7 @@ public class CitasController implements Initializable {
             stage.setTitle(cita == null ? "Nueva Cita" : "Editar Cita");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait();
 
         } catch (IOException e) {

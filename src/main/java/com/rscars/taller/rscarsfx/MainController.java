@@ -213,6 +213,7 @@ public class MainController implements Initializable {
             Stage loginStage = new Stage();
             loginStage.setTitle("RsCars Taller - Inicio de Sesión");
             loginStage.setScene(scene);
+            loginStage.setResizable(false);
             loginStage.show();
 
             // Obtener la ventana actual (el panel principal) a través de cualquier

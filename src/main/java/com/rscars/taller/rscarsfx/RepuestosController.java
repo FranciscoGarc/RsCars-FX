@@ -116,6 +116,7 @@ public class RepuestosController implements Initializable {
             stage.setTitle(repuesto == null ? "Nuevo Repuesto" : "Editar Repuesto");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -130,4 +131,3 @@ public class RepuestosController implements Initializable {
         alert.showAndWait();
     }
 }
-

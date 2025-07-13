@@ -102,6 +102,29 @@ public class ValidationUtil {
         });
     }
 
+    public static void autoFormatHour(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String numbers = newValue.replaceAll("[^\\d]", "");
+            if (numbers.length() > 4) {
+                numbers = numbers.substring(0, 4);
+            }
+
+            StringBuilder formatted = new StringBuilder();
+            if (numbers.length() > 2) {
+                formatted.append(numbers.substring(0, 2));
+                formatted.append(":");
+                formatted.append(numbers.substring(2));
+            } else {
+                formatted.append(numbers);
+            }
+
+            if (!formatted.toString().equals(newValue)) {
+                textField.setText(formatted.toString());
+                textField.positionCaret(formatted.length());
+            }
+        });
+    }
+
     public static void autoFormatDui(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             String numbers = newValue.replaceAll("[^\\d]", "");

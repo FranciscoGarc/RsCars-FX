@@ -42,7 +42,7 @@
                 <Label text="Fecha:" GridPane.rowIndex="3" />
                 <DatePicker fx:id="dpFecha" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <Label text="Hora:" GridPane.rowIndex="4" />
-                <TextField fx:id="tfHora" promptText="HH:mm" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="tfHora" promptText="HH:mm" prefWidth="100.0" maxWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="Estado:" GridPane.rowIndex="5" />
                 <ComboBox fx:id="cbEstado" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             </children>

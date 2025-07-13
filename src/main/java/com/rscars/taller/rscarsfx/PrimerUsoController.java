@@ -242,6 +242,7 @@ public class PrimerUsoController implements Initializable {
 
             Stage stage = new Stage();
             stage.setTitle("RsCars Taller - Panel Principal");
+            stage.setResizable(false);
             stage.setScene(scene);
             stage.show();
 

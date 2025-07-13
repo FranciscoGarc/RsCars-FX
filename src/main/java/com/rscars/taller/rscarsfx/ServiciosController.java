@@ -117,6 +117,7 @@ public class ServiciosController implements Initializable {
             stage.setTitle(servicio == null ? "Nuevo Servicio" : "Editar Servicio");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();

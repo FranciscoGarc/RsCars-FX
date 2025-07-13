@@ -195,6 +195,7 @@ public class ClientesController implements Initializable {
             stage.setTitle(cliente == null ? "Nuevo Cliente" : "Editar Cliente");
             stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.showAndWait(); // Muestra y espera a que se cierre
 
         } catch (IOException e) {
