@@ -6,6 +6,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -25,7 +27,7 @@ public class ClienteFormularioController implements Initializable {
     @FXML
     private TextField tfNombre, tfApellido, tfTelefono, tfDireccion, tfDui, tfCorreo, tfUsuario;
     @FXML
-    private Button btnGuardar, btnCancelar;
+    private Button btnGuardar, btnCancelar, togglePasswordVisibility;
     @FXML
     private PasswordField pfContra;
     @FXML
@@ -39,6 +41,18 @@ public class ClienteFormularioController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ValidationUtil.autoFormatPhone(tfTelefono);
         ValidationUtil.autoFormatDui(tfDui);
+
+        togglePasswordVisibility.setGraphic(createEyeIcon());
+    }
+
+    // --- SVG de icono de ojo reutilizable ---
+    private StackPane createEyeIcon() {
+        SVGPath eyeIcon = new SVGPath();
+        eyeIcon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 10c-2.48 0-4.5-2.02-4.5-4.5S9.52 5.5 12 5.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-7C10.62 7.5 9.5 8.62 9.5 10s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5S13.38 7.5 12 7.5z");
+        eyeIcon.setStyle("-fx-fill: #36454F;");
+        StackPane iconContainer = new StackPane(eyeIcon);
+        iconContainer.setPrefSize(18, 18);
+        return iconContainer;
     }
 
     @FXML

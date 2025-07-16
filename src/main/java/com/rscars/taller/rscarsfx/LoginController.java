@@ -1,5 +1,6 @@
 package com.rscars.taller.rscarsfx;
 
+import javafx.scene.layout.StackPane;
 import org.mindrot.jbcrypt.BCrypt;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -16,9 +17,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.fxml.Initializable; // Asegúrate de tener esta importación
+import javafx.scene.layout.Region;
+import javafx.scene.shape.SVGPath;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class LoginController {
+public class LoginController implements Initializable {
 
     @FXML
     private TextField tfUsuario;
@@ -32,9 +38,32 @@ public class LoginController {
     @FXML
     private TextField tfContraVisible;
 
+    @FXML
+    private Button btnTogglePassword;
+
     /**
      * Una clase simple para contener los datos del usuario después del login.
      */
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        // 1. Define la forma del ícono del ojo
+        SVGPath eyeIcon = new SVGPath();
+        eyeIcon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 10c-2.48 0-4.5-2.02-4.5-4.5S9.52 5.5 12 5.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-7C10.62 7.5 9.5 8.62 9.5 10s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5S13.38 7.5 12 7.5z");
+
+        // Le damos color directamente a la forma del SVG, que es más fiable
+        eyeIcon.setStyle("-fx-fill: #36454F;"); // Color oscuro del texto del botón
+
+        // 2. Usamos un StackPane para centrar y contener el ícono
+        // Esto nos da mejor control sobre el tamaño y la alineación.
+        StackPane iconContainer = new StackPane(eyeIcon);
+        iconContainer.setPrefSize(18, 18); // Tamaño del contenedor
+
+        // 3. Asigna el contenedor con el ícono como el gráfico del botón
+        btnTogglePassword.setGraphic(iconContainer);
+    }
+
     public static class UserSession {
         public final int idTipo;
         public final String nombre;
@@ -96,6 +125,7 @@ public class LoginController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.setResizable(false);
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,6 +147,7 @@ public class LoginController {
             stage.setTitle("RsCars Taller - Panel Principal");
             stage.setScene(scene);
             stage.setResizable(false);
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
             stage.show();
 
             Stage loginStage = (Stage) btnIngresar.getScene().getWindow();

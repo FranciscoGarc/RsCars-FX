@@ -30,7 +30,7 @@ public class MainController implements Initializable {
 
     @FXML private Label lblBienvenida;
     @FXML private PieChart graficoEstadoCitas;
-    @FXML private BarChart<String, Number> graficoServicios; // Gráfico extra como ejemplo
+    @FXML private BarChart<String, Number> graficoServicios;
     private String nombreUsuarioLogueado;
 
 
@@ -207,13 +207,14 @@ public class MainController implements Initializable {
     void onCerrarSesionClick() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
+            Scene scene = new Scene(fxmlLoader.load(), 400, 450);
 
             // Crear una nueva ventana (Stage) para la pantalla de login
             Stage loginStage = new Stage();
             loginStage.setTitle("RsCars Taller - Inicio de Sesión");
             loginStage.setScene(scene);
             loginStage.setResizable(false);
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
             loginStage.show();
 
             // Obtener la ventana actual (el panel principal) a través de cualquier

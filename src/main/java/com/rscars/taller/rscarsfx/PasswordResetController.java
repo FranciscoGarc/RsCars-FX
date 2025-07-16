@@ -1,20 +1,25 @@
 package com.rscars.taller.rscarsfx;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable; // ¡Importante!
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane; // ¡Importante!
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath; // ¡Importante!
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.net.URL; // ¡Importante!
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle; // ¡Importante!
 
-public class PasswordResetController {
+public class PasswordResetController implements Initializable{
 
     @FXML private VBox panelEmail, panelVerificacion, panelReset;
     @FXML private TextField tfCorreo, tfCodigo;
@@ -22,8 +27,30 @@ public class PasswordResetController {
     @FXML private TextField tfNuevaContraVisible, tfConfirmarContraVisible;
     @FXML private Button btnEnviarCodigo, btnVerificarCodigo, btnResetear;
 
+    // --- Añade los fx:id para los botones de ojo ---
+    @FXML private Button btnToggleNewPassword;
+    @FXML private Button btnToggleConfirmPassword;
+
     private String codigoEnviado;
     private int idUsuarioParaResetear;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Asignamos el mismo ícono a ambos botones
+        btnToggleNewPassword.setGraphic(createEyeIcon());
+        btnToggleConfirmPassword.setGraphic(createEyeIcon());
+    }
+
+    private StackPane createEyeIcon() {
+        SVGPath eyeIcon = new SVGPath();
+        eyeIcon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 10c-2.48 0-4.5-2.02-4.5-4.5S9.52 5.5 12 5.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-7C10.62 7.5 9.5 8.62 9.5 10s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5S13.38 7.5 12 7.5z");
+        eyeIcon.setStyle("-fx-fill: #36454F;");
+
+        StackPane iconContainer = new StackPane(eyeIcon);
+        iconContainer.setPrefSize(18, 18);
+
+        return iconContainer;
+    }
 
     @FXML
     void handleSendCode() {

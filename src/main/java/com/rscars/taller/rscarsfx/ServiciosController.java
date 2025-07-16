@@ -108,6 +108,7 @@ public class ServiciosController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("servicio-formulario-view.fxml"));
             Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
             ServicioFormularioController formularioController = loader.getController();
             formularioController.setServiciosController(this);
             if (servicio != null) {

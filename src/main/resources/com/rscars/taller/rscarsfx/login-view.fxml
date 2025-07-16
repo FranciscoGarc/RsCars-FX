@@ -2,34 +2,30 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="400.0" prefWidth="350.0" spacing="20.0" xmlns="http://javafx.com/javafx/21"
+<VBox styleClass="vbox-centrado" spacing="20.0" xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rscars.taller.rscarsfx.LoginController">
     <children>
-        <Label text="Inicio de Sesión">
-            <font>
-                <Font name="System Bold" size="24.0"/>
-            </font>
-        </Label>
+        <Label styleClass="title-label" text="Inicio de Sesión"/>
+
         <TextField fx:id="tfUsuario" maxWidth="200.0" promptText="Usuario"/>
 
         <HBox alignment="CENTER" maxWidth="200.0" spacing="5.0">
             <children>
-                <PasswordField fx:id="pfContra" promptText="Contraseña" HBox.hgrow="ALWAYS" />
-                <TextField fx:id="tfContraVisible" managed="false" promptText="Contraseña" visible="false" HBox.hgrow="ALWAYS" />
-                <Button onAction="#togglePasswordVisibility" text="👁" />
+                <PasswordField fx:id="pfContra" promptText="Contraseña" HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="tfContraVisible" managed="false" promptText="Contraseña" visible="false" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnTogglePassword" onAction="#togglePasswordVisibility" text=""/>
             </children>
         </HBox>
+
         <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar"/>
-        <Hyperlink text="Olvidé mi contraseña" onAction="#handleForgotPassword" />
+        <Hyperlink onAction="#handleForgotPassword" text="Olvidé mi contraseña"/>
     </children>
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>

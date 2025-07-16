@@ -142,6 +142,7 @@ public class VehiculosController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("vehiculo-formulario-view.fxml"));
             Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
             VehiculoFormularioController formularioController = loader.getController();
             formularioController.setVehiculosController(this);

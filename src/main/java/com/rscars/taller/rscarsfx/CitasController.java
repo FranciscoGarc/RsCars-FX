@@ -51,6 +51,7 @@ public class CitasController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("cita-formulario-view.fxml"));
             Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
             CitaFormularioController controller = loader.getController();
             controller.setCitasController(this);

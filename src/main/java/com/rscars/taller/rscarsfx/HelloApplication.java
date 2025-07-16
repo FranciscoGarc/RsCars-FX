@@ -25,7 +25,8 @@ public class HelloApplication extends Application {
             stage.setTitle("RsCars Taller - Inicio de Sesión");
         }
 
-        Scene scene = new Scene(fxmlLoader.load(), 400, 450); // Ajusta el tamaño si es necesario
+        Scene scene = new Scene(fxmlLoader.load(), 450, 500); // Ajusta el tamaño si es necesario
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

@@ -59,8 +59,7 @@
     <center>
         <VBox spacing="20" style="-fx-padding: 20;">
             <children>
-                <Label fx:id="lblBienvenida" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-
+                <Label fx:id="lblBienvenida" styleClass="title-label" />
                 <GridPane hgap="20" vgap="20">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="50.0" />
@@ -71,7 +70,6 @@
                     </rowConstraints>
                     <children>
                         <PieChart fx:id="graficoEstadoCitas" title="Estado de las Citas" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-
                         <BarChart fx:id="graficoServicios" title="Servicios Más Populares" GridPane.columnIndex="1" GridPane.rowIndex="0">
                             <xAxis><CategoryAxis label="Servicios" /></xAxis>
                             <yAxis><NumberAxis label="Cantidad de Citas" /></yAxis>

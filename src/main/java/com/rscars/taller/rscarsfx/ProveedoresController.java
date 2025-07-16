@@ -108,6 +108,7 @@ public class ProveedoresController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("proveedor-formulario-view.fxml"));
             Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
             ProveedorFormularioController formularioController = loader.getController();
             formularioController.setProveedoresController(this);
             if (proveedor != null) {

@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.io.IOException;
 import java.util.Optional;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.SVGPath;
 
 public class ClientesController implements Initializable {
 
@@ -180,7 +182,8 @@ public class ClientesController implements Initializable {
     private void abrirFormularioCliente(Cliente cliente) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("cliente-formulario-view.fxml"));
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 450, 500); // Ajusta el tamaño según sea necesario
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
             // Pasar la referencia de este controlador al del formulario
             ClienteFormularioController formularioController = loader.getController();
@@ -210,4 +213,5 @@ public class ClientesController implements Initializable {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
 }

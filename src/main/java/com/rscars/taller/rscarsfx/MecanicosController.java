@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -162,7 +163,8 @@ public class MecanicosController implements Initializable {
     private void abrirFormularioMecanico(Mecanico mecanico) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("mecanico-formulario-view.fxml"));
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 450, 500); // Ajusta el tamaño según sea necesario
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
             MecanicoFormularioController formularioController = loader.getController();
             formularioController.setMecanicosController(this);
             if (mecanico != null) {

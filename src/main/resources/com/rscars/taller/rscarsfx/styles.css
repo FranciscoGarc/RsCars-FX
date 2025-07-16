@@ -1,0 +1,233 @@
+/* ==========================================================================
+   Estilos Generales y Tipografías
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap');
+
+
+/* Estilo raíz: Define el fondo y la fuente principal para toda la aplicación */
+.root {
+    -fx-font-family: 'Lato';
+    -fx-font-size: 14px;
+    -fx-background-color: #36454F; /* Fondo: Gris Oscuro */
+}
+
+/* ==========================================================================
+   Estilos para Controles Comunes
+   ========================================================================== */
+
+/* --- Etiquetas (Labels) --- */
+.label {
+    -fx-text-fill: #FFFFFF; /* Texto Principal: Blanco */
+    -fx-opacity: 0.9;
+}
+
+/* Estilo personalizado para títulos principales */
+.title-label {
+    -fx-font-family: 'Playfair Display';
+    -fx-font-size: 28px;
+    -fx-text-fill: #32CD32; /* Texto Secundario: Verde */
+}
+
+/* --- Botones --- */
+.button {
+    -fx-background-color: #7FFF00; /* Acento: Verde Lima */
+    -fx-text-fill: #36454F; /* Texto oscuro para buen contraste */
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+
+    /* Animación sutil al pasar el mouse */
+    -fx-transition: -fx-background-color 0.2s, -fx-scale-x 0.2s, -fx-scale-y 0.2s;
+}
+
+.button:hover {
+    -fx-background-color: #FFFACD; /* Resaltado sutil al pasar el mouse */
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* --- Campos de Texto y Contraseña --- */
+.text-field, .password-field {
+    -fx-background-color: #4A5A6A;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #A9A9A9;
+    -fx-background-radius: 5px;
+    -fx-border-color: transparent;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-transition: -fx-border-color 0.3s;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #7FFF00; /* Acento al enfocar */
+}
+
+/* --- Enlaces --- */
+.hyperlink {
+    -fx-text-fill: #7FFF00; /* Acento: Verde Lima */
+    -fx-border-color: transparent;
+}
+.hyperlink:hover {
+    -fx-underline: true;
+}
+
+/* --- Tablas --- */
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #36454F;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: #4A5A6A;
+    -fx-border-color: #36454F;
+    -fx-size: 40px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #7FFF00; /* Acento en cabeceras */
+    -fx-font-family: 'Lato Bold';
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #4A5A6A;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #36454F;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #41505C;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #2b4904; /* Resaltado sutil en selección */
+}
+
+/* --- Gráficos (Charts) --- */
+.chart {
+    -fx-padding: 10px;
+}
+.chart-plot-background {
+    -fx-background-color: #4A5A6A; /* Un fondo ligeramente más claro para el área del gráfico */
+}
+.chart-title {
+    -fx-font-family: 'Playfair Display';
+    -fx-text-fill: #32CD32; /* Texto Secundario: Verde */
+    -fx-font-size: 1.6em;
+}
+.axis {
+    -fx-tick-label-fill: #FFFFFF; /* Color de los números y etiquetas en los ejes */
+}
+.axis-label {
+    -fx-text-fill: #FFFFFF; /* Color de los títulos de los ejes (ej. "Servicios") */
+}
+.chart-legend {
+    -fx-background-color: transparent; /* Fondo transparente para la leyenda */
+}
+.chart-legend .label {
+    -fx-text-fill: #FFFFFF; /* Texto blanco para la leyenda */
+}
+
+/* Estilo específico para el botón de ver contraseña */
+#btnTogglePassword {
+    /* Le damos un ancho mínimo para asegurar que el texto 'Ver' quepa */
+    -fx-min-width: 45px;
+
+    /* Le quitamos el padding horizontal para que no ocupe tanto espacio */
+    -fx-padding: 8px 5px;
+}
+
+/* ==========================================================================
+   Centrado de Elementos
+   ========================================================================== */
+.hbox-centrado {
+    -fx-alignment: center;
+}
+
+.vbox-centrado {
+    -fx-alignment: center;
+}
+/* ==========================================================================
+   Estilos para Gráficos (Dashboard)
+   ========================================================================== */
+
+
+/* --- Estilos específicos para el Gráfico de Pie (PieChart) --- */
+.pie-chart .chart-pie-label-line {
+    -fx-stroke: #A9A9A9; /* Color de las líneas que apuntan a las porciones */
+    -fx-fill: #A9A9A9;
+}
+
+/* Mueve la leyenda a la parte inferior para que no choque con el título */
+.pie-chart {
+    -fx-legend-side: bottom;
+    -fx-pie-label-visible: false;
+}
+
+/* Asigna colores personalizados a las porciones del PieChart */
+.default-color0.chart-pie { -fx-pie-color: #7FFF00; } /* Acento: Verde Lima */
+.default-color1.chart-pie { -fx-pie-color: #32CD32; } /* Secundario: Verde Oscuro */
+.default-color2.chart-pie { -fx-pie-color: #FFFACD; } /* Resaltado: Amarillo */
+.default-color3.chart-pie { -fx-pie-color: #A9A9A9; } /* Un gris para más variedad */
+
+
+/* --- Estilos específicos para el Gráfico de Barras (BarChart) --- */
+.bar-chart .axis-x .tick-label {
+    -fx-rotate: -45; /* Rota las etiquetas del eje X para que no se corten */
+    -fx-text-alignment: right;
+}
+
+/* Asigna un color personalizado a las barras */
+.default-color0.chart-bar {
+    -fx-bar-fill: #7FFF00; /* Acento: Verde Lima */
+}
+.pie-chart .chart-pie-label {
+    -fx-fill: #FFFFFF !important; /* ¡Importante! Pone el texto de la etiqueta en blanco */
+    -fx-font-size: 11px;
+}
+
+/* --- Barra de Menú Principal (MenuBar) --- */
+
+/* Estilo para la barra de menú completa */
+.menu-bar {
+    -fx-background-color: #36454F; /* Fondo: Gris Oscuro */
+}
+
+/* Estilo para el texto de los menús principales (Archivo, Gestión, etc.) */
+.menu-bar .label {
+    -fx-text-fill: #FFFFFF; /* Texto Principal: Blanco */
+    -fx-font-family: 'Lato Bold';
+}
+
+/* Efecto al pasar el mouse sobre un menú principal */
+.menu:hover, .menu:showing {
+    -fx-background-color: #4A5A6A; /* Un gris un poco más claro */
+}
+
+/* Estilo para el menú desplegable (el que aparece al hacer clic) */
+.context-menu {
+    -fx-background-color: #4A5A6A;
+    -fx-background-insets: 0, 1, 2;
+    -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em; /* Padding estándar */
+}
+
+/* Estilo para el texto de los elementos dentro del desplegable */
+.menu-item .label {
+    -fx-text-fill: #FFFFFF; /* Texto blanco para los items */
+}
+
+/* Estilo para un elemento del menú cuando pasas el mouse sobre él */
+.menu-item:focused {
+    -fx-background-color: #7FFF00; /* Acento: Verde Lima */
+}
+
+/* Estilo para el texto del elemento cuando pasas el mouse sobre él */
+.menu-item:focused .label {
+    -fx-text-fill: #36454F; /* Texto oscuro para un buen contraste */
+}

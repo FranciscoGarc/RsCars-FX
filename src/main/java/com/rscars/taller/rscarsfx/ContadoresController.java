@@ -15,6 +15,8 @@ import java.sql.*;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.io.IOException;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.SVGPath;
 
 public class ContadoresController implements Initializable {
 
@@ -172,7 +174,8 @@ public class ContadoresController implements Initializable {
     private void abrirFormularioContador(Contador contador) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("contador-formulario-view.fxml"));
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 450, 500); // Ajusta el tamaño según sea necesario
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
             ContadorFormularioController formularioController = loader.getController();
             formularioController.setContadoresController(this);
@@ -200,4 +203,5 @@ public class ContadoresController implements Initializable {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
 }
